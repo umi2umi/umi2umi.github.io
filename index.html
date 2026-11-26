@@ -1,0 +1,1306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<title>Hide, Erase, or Replace?</title>
+<link rel="icon" href="favicon.ico" sizes="48x48 32x32"><link rel="icon" type="image/png" href="favicon-48.png" sizes="48x48"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script>window.GA_ID = "";</script><script src="analytics.js"></script>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+/* Layout: UMI-Underwater pattern. Full-height video hero with dark overlay and white type, top link bar, boxed section tabs at the hero foot; then 960px centered sections, one black band for the method taxonomy, rounded 20px media, boxed Q&A, headshot grid, BibTeX, footer credits. Single light theme, committed, like the reference site. */
+:root {
+  --bg: #ffffff;
+  --fg: #363636;
+  --fg-muted: #4a4a4a;
+  --fg-light: #7a7a7a;
+  --band: #0a0a0a;
+  --band-fg: #f5f5f5;
+  --box: #f5f5f5;
+  --line: #dbdbdb;
+  --link: hsl(204, 86%, 53%);
+  --accent: #ff7a1a;      /* UMI finger orange */
+  --dark-btn: #363636;
+  --ph-line: #c7792a;
+  --ph-bg: #fff7ee;
+  --ph-fg: #8a4b0d;
+  --font-title: "Google Sans", "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 1rem; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--band); }
+*, *::before, *::after { box-sizing: border-box; }
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+img, video { max-width: 100%; display: block; }
+h1, h2, h3 { font-family: var(--font-title); text-wrap: balance; margin: 0; }
+
+/* Hero */
+.hero { position: relative; min-height: 88vh; min-height: 88svh; display: flex; flex-direction: column; overflow: hidden; background: var(--band); color: #fff; }
+.hero-video { position: absolute; inset: 0; z-index: 0; }
+.hero-video video { width: 100%; height: 100%; object-fit: cover; }
+.overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.45) 0%, rgba(0,0,0,.42) 45%, rgba(0,0,0,.5) 100%); z-index: 1; }
+.hero-body .container { text-shadow: 0 2px 6px rgba(0,0,0,.9), 0 0 24px rgba(0,0,0,.8); background: transparent; border-radius: 0; padding: clamp(1.4rem, 3vw, 2.6rem) clamp(1.2rem, 4vw, 3.2rem); box-shadow: none; }
+.hero-head, .hero-body, .hero-foot { position: relative; z-index: 2; }
+.hero-head { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: .25rem; padding-block: .6rem; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); font-size: 1.05rem; }
+.hero-head a, .hero-head span.soon { color: #fff; display: inline-flex; align-items: center; gap: .45rem; padding: .5rem 1rem; }
+.hero-head a:hover { text-decoration: none; background: rgba(255,255,255,.12); border-radius: 6px; }
+.hero-head .soon { opacity: .55; cursor: default; }
+.hero-head svg { width: 1.1em; height: 1.1em; fill: currentColor; }
+.hero-body { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding-block: 3rem; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.hero-body .container { max-width: 860px; }
+.hero-title { font-size: clamp(2.2rem, 6.2vw, 5rem); font-weight: 700; line-height: 1.05; letter-spacing: -.01em; color: #fff; text-shadow: 0 3px 10px rgba(0,0,0,.95), 0 0 36px rgba(0,0,0,.85); }
+.hero-sub { font-size: clamp(1.1rem, 2.2vw, 1.8rem); font-weight: 600; margin-top: .8rem; color: #fff; line-height: 1.25; }
+.hero-venue, .hero-authors, .hero-aff { font-style: italic; opacity: 1; margin-top: 1.1rem; font-family: var(--font-title); }
+.hero-aff img { height: 36px; width: auto; display: block; margin: .9rem auto 0; opacity: .95; }
+@media (max-width: 520px) { .hero-aff img { height: 28px; } }
+.hero-venue { font-size: clamp(1rem, 1.5vw, 1.3rem); }
+.hero-authors { font-size: clamp(.95rem, 1.3vw, 1.15rem); line-height: 1.5; }
+.hero-authors a { color: inherit; }
+.hero-aff { font-size: clamp(.9rem, 1.1vw, 1rem); margin-top: .4rem; }
+.hero-links { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin-top: 1.6rem; }
+.btn { display: inline-flex; align-items: center; gap: .5rem; background: var(--dark-btn); color: #fff; border-radius: 9999px; padding: .55rem 1.2rem; font-size: 1rem; font-family: var(--font-body); border: 1px solid transparent; }
+.btn:hover { text-decoration: none; background: #1f1f1f; }
+.btn svg { width: 1em; height: 1em; fill: currentColor; }
+.btn.soon { opacity: .5; cursor: default; }
+.relnote { display: inline-block; margin-top: .3rem; font-size: .76em; line-height: 1.3; color: #7a7a7a; }
+.dl .btn.raw { background: #fff; color: var(--dark-btn); border-color: var(--dark-btn); }
+.dl .btn.raw:hover { background: #f0f0f0; }
+
+.hero-foot { background: rgba(0,0,0,.35); backdrop-filter: blur(4px); }
+.tabs { display: flex; list-style: none; margin: 0; padding: 0 max(16px, env(safe-area-inset-left, 0px)) 0 max(16px, env(safe-area-inset-right, 0px)); overflow-x: auto; }
+.tabs li { flex: 1 0 auto; text-align: center; }
+.tabs a { display: block; color: #fff; padding: .9rem 1rem; border: 1px solid rgba(255,255,255,.25); border-bottom: 0; border-radius: 6px 6px 0 0; margin-top: .5rem; font-size: 1.05rem; white-space: nowrap; }
+.tabs a:hover { background: rgba(255,255,255,.15); text-decoration: none; }
+.badge { position: absolute; z-index: 3; left: max(16px, env(safe-area-inset-left, 0px)); bottom: 4.2rem; background: var(--ph-bg); color: var(--ph-fg); border: 1.5px dashed var(--ph-line); border-radius: 8px; padding: .5rem .75rem; font-size: .8rem; max-width: 22rem; line-height: 1.35; }
+.badge b { display: block; text-transform: uppercase; letter-spacing: .06em; font-size: .7rem; }
+
+/* Sections */
+.section { padding-block: 3.5rem; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.section.is-medium { padding-block: 5rem; }
+.section.is-small { padding-block: 2.5rem; }
+.container { max-width: 960px; margin-inline: auto; min-width: 0; }
+.narrow { max-width: 780px; margin-inline: auto; }
+.title { font-size: clamp(1.7rem, 4vw, 3rem); font-weight: 600; text-align: center; margin-bottom: 1.5rem; line-height: 1.15; }
+.title.is-3 { font-size: clamp(1.4rem, 3vw, 2rem); }
+.title.left { text-align: left; }
+.subtitle { font-size: clamp(1.15rem, 2.2vw, 1.5rem); line-height: 1.5; font-weight: 400; text-align: justify; }
+.subtitle b { font-weight: 700; }
+.content { font-size: 1.05rem; text-align: justify; }
+.content p { margin: 0 0 1rem; }
+.content p:last-child { margin-bottom: 0; }
+.caption { font-size: .9rem; color: var(--fg-muted); text-align: left; margin-top: .6rem; line-height: 1.5; }
+.caption b { color: var(--fg); }
+.media { border-radius: 20px; overflow: hidden; background: #000; }
+.media.light { background: var(--box); }
+.media video, .media img { width: 100%; }
+.stack { display: flex; flex-direction: column; gap: 1.5rem; }
+.band { background: var(--band); color: var(--band-fg); }
+.band .title { color: #fff; }
+.band .caption { color: #cfcfcf; }
+.band .caption b { color: #fff; }
+.band .frame { border: 1px solid rgba(255,255,255,.18); border-radius: 12px; padding: .9rem; }
+.band .frame img { border-radius: 8px; background: #fff; }
+.grid { display: grid; gap: 1rem; }
+.grid.four { grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }
+.grid.two { grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); }
+.grid.three { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
+.tile { min-width: 0; }
+.tile .label { font-family: var(--font-title); font-weight: 600; font-size: 1.05rem; margin-bottom: .4rem; display: flex; align-items: center; gap: .5rem; }
+.tile .label i { width: .8rem; height: .8rem; border-radius: 2px; display: inline-block; }
+.tile .media { border-radius: 12px; }
+.tile .how { font-size: .9rem; color: var(--fg-muted); margin-top: .4rem; line-height: 1.45; }
+.finding { background: #eef3fb; border: 1px solid #c9d8ef; border-radius: 10px; padding: 1rem 1.2rem; font-style: italic; margin-top: 1.2rem; }
+.finding b { font-style: normal; color: #1f4f9a; }
+/* Evaluation budgets: one source, two paths, one target. All cards share one size; the paths run behind the target stack. */
+.budget.one { --card: 10.5rem; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 1.6rem; align-items: center; margin: 2rem 0 .6rem; padding: 1.2rem 1.4rem; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+.bd-item { min-width: 0; text-align: center; }
+.bd-duo { display: grid; grid-template-columns: var(--card) var(--card); gap: .7rem; justify-content: center; }
+.bd-stack { position: relative; width: var(--card); aspect-ratio: 4 / 3; margin: 0 auto; }
+.bd-stack img { position: absolute; inset: 5%; width: 90%; height: 90%; object-fit: cover; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.18); background: #fff; }
+.bd-stack img:nth-child(1) { transform: translate(-7%, -7%) rotate(-3deg); }
+.bd-stack img:nth-child(2) { transform: translate(0, 0); }
+.bd-stack img:nth-child(3) { transform: translate(7%, 7%) rotate(3deg); z-index: 1; }
+.bd-stack.two img:nth-child(1) { transform: translate(-7%, -7%) rotate(-4deg); }
+.bd-stack.two img:nth-child(2) { transform: translate(5%, 5%) rotate(2deg); z-index: 1; }
+.bd-stack.tgt img { outline: 2px solid #1f4f9a; }
+.bd-l { margin-top: .8rem; }
+.bd-l b { display: block; font-family: var(--font-title); font-size: .85rem; font-weight: 600; color: var(--fg); }
+.bd-l span { font-size: .72rem; color: var(--fg-light); line-height: 1.25; display: block; }
+.bd-mid { display: grid; gap: 1.4rem; min-width: 0; align-self: center; }
+.bd-path { --pc: #5b6472; position: relative; display: grid; justify-items: center; gap: .5rem; }
+.bd-path.ft { --pc: #1f4f9a; }
+.bd-k { text-align: center; }
+.bd-k b { display: block; font-family: var(--font-title); font-size: 1rem; font-weight: 700; color: var(--pc); }
+.bd-k span { font-size: .76rem; color: var(--fg-muted); line-height: 1.3; }
+.bd-line { position: relative; width: 100%; height: 14px; }
+.bd-line i { position: absolute; left: 0; right: 10px; top: 50%; height: 3px; transform: translateY(-50%); background: var(--pc); border-radius: 2px; }
+.bd-line i::after { content: ""; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); border-left: 11px solid var(--pc); border-top: 7px solid transparent; border-bottom: 7px solid transparent; }
+.bd-path.ft { grid-template-rows: auto auto; }
+.bd-path.ft .bd-line { position: absolute; left: 0; right: 0; top: calc(2.9rem + var(--card) * .375); z-index: 0; }
+.bd-path.ft .bd-line i { left: 1.6rem; }
+.bd-path.ft .bd-plus { position: absolute; left: 0; top: calc(2.9rem + var(--card) * .375); transform: translateY(-50%); font-family: var(--font-title); font-size: 1.5rem; font-weight: 700; color: var(--pc); background: #fff; padding: 0 .35rem; line-height: 1; }
+.bd-path.ft .bd-tgt { position: relative; z-index: 1; }
+.bd-deploy { width: calc(var(--card) * 1.5); margin: 0 auto; }
+.bd-deploy img { display: block; width: 100%; max-width: 100%; aspect-ratio: 8 / 5; object-fit: cover; border-radius: 8px; }
+@media (min-width: 761px) and (max-width: 900px) { .budget.one { --card: 8.5rem; gap: 1.1rem; padding: 1rem; } }
+@media (max-width: 760px) {
+  /* Phone: source on top, the two budgets side by side as a fork, both arrows landing on the deployment tile. */
+  .budget.one { --card: 8rem; grid-template-columns: 1fr; gap: .9rem; padding: 1rem .8rem; }
+  .bd-mid { grid-template-columns: 1fr 1fr; gap: .6rem; align-items: stretch; position: relative; padding-top: 1.1rem; }
+  .bd-mid::before { content: ""; position: absolute; top: 0; left: 25%; right: 25%; height: 3px; background: #9aa0a8; border-radius: 2px; }
+  .bd-mid::after { content: ""; position: absolute; top: -.9rem; left: 50%; width: 3px; height: .9rem; background: #9aa0a8; transform: translateX(-50%); }
+  .bd-path { display: flex; flex-direction: column; align-items: center; gap: .4rem; position: static; }
+  .bd-path .bd-line { position: relative; flex: 1; min-height: 2.4rem; width: 100%; top: auto; left: auto; right: auto; order: 9; }
+  .bd-line i { left: 50%; right: auto; top: .2rem; bottom: .9rem; width: 3px; height: auto; transform: translateX(-50%); }
+  .bd-line i::after { right: auto; left: 50%; top: 100%; transform: translateX(-50%); border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 11px solid var(--pc); border-bottom: 0; }
+  .bd-path.ft .bd-plus { position: static; transform: none; padding: 0; line-height: 1; }
+  .bd-path.ft .bd-tgt { position: static; }
+  .bd-path.ft .bd-line { position: relative; top: auto; left: auto; right: auto; order: 9; flex: 1; min-height: 2.4rem; }
+  .bd-path.ft .bd-line i { left: 50%; }
+  .bd-src { padding-top: .6rem; }
+  .bd-k b { font-size: .95rem; }
+  .bd-k span { font-size: .72rem; }
+  .bd-dep { width: 100%; }
+  .bd-deploy { width: min(100%, 20rem); }
+}
+.stats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1rem; text-align: center; margin: 2rem 0; }
+@media (max-width: 1000px) { .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; } }
+.stat { background: var(--box); border-radius: 12px; padding: 1.1rem .5rem; }
+.stat .n { font-family: var(--font-title); font-size: 2.2rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat .l { font-size: .85rem; color: var(--fg-muted); margin-top: .4rem; }
+.task { display: block; margin-top: 2.5rem; padding-top: 2.5rem; border-top: 1px solid var(--line); }
+.task::after { content: ""; display: block; clear: both; }
+.task .figs { float: right; width: calc(50% - 1rem); margin: 0 0 1rem 2rem; }
+.task .text { display: block; }
+.task .text .q, .task .text .answer, .task .text h3, .task .text .eyebrow { display: flow-root; }
+.task .chart-row, .task .strat-row { clear: both; }
+.task .strat-row { padding-top: .4rem; }
+@media (max-width: 760px) { .task { display: flex; flex-direction: column; } .task .text { order: 1; } .task .figs { order: 2; float: none; width: 100%; margin: 1rem 0 0; } .task .strat-h, .task .strat-row { order: 3; } .task .chart-row { order: 4; } }
+.task:first-of-type { border-top: 0; padding-top: 0; }
+.task h3 { font-size: 1.5rem; font-weight: 600; margin-bottom: .6rem; }
+.task .eyebrow, .iso-col .eyebrow { font-size: .78rem; letter-spacing: .09em; text-transform: uppercase; color: var(--fg-light); font-weight: 600; margin-bottom: .4rem; font-family: var(--font-title); }
+.task .text { min-width: 0; }
+.task .figs { min-width: 0; display: flex; flex-direction: column; gap: 1rem; }
+.box { background: var(--bg); border-radius: 6px; box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.02); padding: 3rem 2rem; }
+.authors { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: 1.5rem; text-align: center; margin-top: 1.5rem; }
+.author .pic { width: 9rem; height: 9rem; margin: 0 auto .6rem; border-radius: 50%; }
+.author .name { font-weight: 600; }
+.author .role { font-size: .85rem; color: var(--fg-muted); }
+pre { background: var(--box); border-radius: 8px; padding: 1rem 1.2rem; overflow-x: auto; font-family: var(--font-mono); font-size: .85rem; line-height: 1.5; margin: 1rem 0 0; }
+.qa h3 { font-size: 1.2rem; font-weight: 600; margin: 1.6rem 0 .4rem; }
+.qa h3:first-child { margin-top: 0; }
+.footer { padding-block: 2.5rem; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); background: var(--box); text-align: center; font-size: .9rem; color: var(--fg-muted); }
+.footer p { margin: .3rem 0; }
+
+/* Placeholders for media still to be shot */
+.ph { position: relative; width: 100%; max-width: 100%; border: 2px dashed var(--ph-line); border-radius: 12px; background: var(--ph-bg) repeating-linear-gradient(135deg, transparent 0 14px, rgba(199,121,42,.08) 14px 16px); color: var(--ph-fg); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1rem; gap: .35rem; }
+.ph .k { font-family: var(--font-title); text-transform: uppercase; letter-spacing: .09em; font-size: .72rem; font-weight: 700; }
+.ph .w { font-size: .95rem; font-weight: 600; line-height: 1.35; max-width: 34rem; }
+.ph .s { font-size: .8rem; font-family: var(--font-mono); opacity: .9; }
+.ph.tall .w { font-size: .85rem; }
+.band .ph { background-color: #1a1510; color: #f0c89a; border-color: #d89a4e; }
+.checklist { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: .6rem; }
+.checklist li { display: grid; grid-template-columns: 2.2rem 1fr; gap: .6rem; align-items: start; background: var(--ph-bg); border: 1px dashed var(--ph-line); border-radius: 8px; padding: .7rem .9rem; font-size: .95rem; color: var(--ph-fg); }
+.checklist .num { font-family: var(--font-title); font-weight: 700; }
+.checklist .where { display: block; font-size: .8rem; opacity: .85; font-family: var(--font-mono); margin-top: .2rem; }
+/* Rollouts, hardware, downloads */
+.rollout { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+.rollout:first-of-type { margin-top: 1.5rem; padding-top: 0; border-top: 0; }
+.rollout h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: .2rem; }
+.rollout .sub { font-size: .9rem; color: var(--fg-muted); margin: 0 0 .9rem; }
+.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: 1rem; }
+.pair .ph.ok { border-color: #2f8f4e; color: #1f5e34; background: #eefaf1 repeating-linear-gradient(135deg, transparent 0 14px, rgba(47,143,78,.08) 14px 16px); }
+.pair .ph.bad { border-color: #c84b3a; color: #7a2619; background: #fdf0ee repeating-linear-gradient(135deg, transparent 0 14px, rgba(200,75,58,.08) 14px 16px); }
+.pair .ph .k::before { content: ""; display: inline-block; width: .6rem; height: .6rem; border-radius: 50%; margin-right: .4rem; background: currentColor; vertical-align: middle; }
+.hw { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 1.2rem; margin-top: 1.5rem; }
+.hw.cams { grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); margin-top: 1rem; }
+.hw-h { font-family: var(--font-title); font-size: 1.35rem; font-weight: 600; margin: 2rem 0 0; color: var(--fg); }
+.hw-h + .hw { margin-top: .9rem; }
+.hw .tile .ph { aspect-ratio: 4 / 3; }
+.hw .tile .how { text-align: left; }
+.hw .tile .media img, .hw .tile .media video { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.clipw { margin: 0; min-width: 0; }
+.clip { position: relative; border-radius: 12px; overflow: hidden; background: #000; }
+.clip video { display: block; width: 100%; object-fit: cover; }
+.clip .fov { position: absolute; right: .6rem; bottom: .6rem; z-index: 1; width: 30%; max-width: 190px; border-radius: 8px; border: 2px solid rgba(255,255,255,.9); box-shadow: 0 2px 12px rgba(0,0,0,.4); }
+.clip .tag { position: absolute; top: .6rem; left: .6rem; z-index: 1; font-family: var(--font-title); font-size: .7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: .22rem .6rem; border-radius: 999px; color: #fff; background: rgba(0,0,0,.6); }
+.clip .spd { position: absolute; top: .6rem; right: .6rem; z-index: 1; font-family: var(--font-title); font-size: .7rem; font-weight: 700; padding: .22rem .5rem; border-radius: 999px; color: #111; background: rgba(255,255,255,.85); }
+.clipw.ok .tag { background: #2f8f4e; }
+.clipw.bad .tag { background: #c84b3a; }
+.clip .clip-tgt, .sim .clip-tgt { position: absolute; left: .6rem; bottom: .6rem; z-index: 1; display: block; margin: 0; --fl: clamp(34px, 3.6vw, 48px); }
+.clip .clip-tgt .ee-group, .sim .clip-tgt .ee-group { background: rgba(255,255,255,.94); box-shadow: 0 2px 10px rgba(0,0,0,.3); padding: 1rem .5rem .2rem; gap: .3rem; }
+.clip .clip-tgt .ee img, .sim .clip-tgt .ee img { height: 36px; max-width: min(90px, 100%); }
+.clip .clip-tgt .ee img[src$="_h.png"], .sim .clip-tgt .ee img[src$="_h.png"] { height: auto; max-width: none; }
+.clip .clip-tgt .ee img.cam { height: 28px; }
+.clip .clip-tgt .ee figcaption, .sim .clip-tgt .ee figcaption { font-size: .6rem; }
+@media (max-width: 520px) { .clip .clip-tgt, .sim .clip-tgt { --fl: 30px; } .clip .clip-tgt .ee img, .sim .clip-tgt .ee img { height: 30px; } .clip .clip-tgt .ee img[src$="_h.png"], .sim .clip-tgt .ee img[src$="_h.png"] { height: auto; } .clip .clip-tgt .ee img.cam { height: 24px; } .clip .clip-tgt .ee-group, .sim .clip-tgt .ee-group { padding: .9rem .45rem .2rem; } }
+.clipw figcaption { font-size: .85rem; color: var(--fg-muted); line-height: 1.4; margin: .45rem .15rem 0; }
+.band .clipw figcaption { color: rgba(245,245,245,.78); }
+.quad { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+.quad .clip video { aspect-ratio: 4 / 3; }
+.standin { display: block; font-size: .78rem; line-height: 1.35; color: var(--ph-fg); background: var(--ph-bg); border: 1px dashed var(--ph-line); border-radius: 8px; padding: .4rem .65rem; margin-top: .55rem; }
+.standin b { font-family: var(--font-title); text-transform: uppercase; letter-spacing: .07em; font-size: .68rem; margin-right: .3rem; }
+.band .standin { background: #1a1510; color: #f0c89a; border-color: #d89a4e; }
+.spec { display: grid; grid-template-columns: max-content 1fr; gap: .3rem 1rem; font-size: .95rem; margin-top: 1.2rem; }
+.spec dt { color: var(--fg-light); }
+.spec dd { margin: 0; }
+.tablebox { overflow-x: auto; margin-top: 1.5rem; }
+table.dl { width: 100%; border-collapse: collapse; font-size: .92rem; min-width: 48rem; }
+table.dl th { text-align: left; font-family: var(--font-title); font-weight: 600; padding: .6rem .6rem; border-bottom: 2px solid var(--fg); white-space: nowrap; }
+table.dl td { text-align: left; padding: .7rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.dl td.n { font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.dl .btn { padding: .25rem .75rem; font-size: .8rem; margin: .1rem .2rem .1rem 0; }
+.dlnote { font-size: .9rem; color: var(--fg-muted); margin-top: .8rem; }
+
+/* Side legend */
+.legend { position: fixed; left: 1.1rem; top: 50%; transform: translateY(-50%); z-index: 20; background: rgba(255,255,255,.88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,.08); border-radius: 14px; padding: .55rem .4rem; box-shadow: 0 6px 24px rgba(0,0,0,.12); }
+@media (max-width: 1040px) { .legend { display: none; } }
+.legend { opacity: 0; visibility: hidden; transform: translate(-12px, -50%); transition: opacity .3s ease, transform .3s ease, visibility 0s linear .3s; pointer-events: none; }
+.legend.is-visible { opacity: 1; visibility: visible; transform: translate(0, -50%); transition: opacity .3s ease, transform .3s ease, visibility 0s; pointer-events: auto; }
+.legend ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .1rem; }
+.legend a { display: flex; align-items: center; gap: .55rem; color: var(--fg-muted); font-family: var(--font-title); font-size: .78rem; font-weight: 500; line-height: 1.2; padding: .28rem .5rem; border-radius: 8px; white-space: nowrap; }
+.legend a::before { content: ""; flex: 0 0 auto; width: .5rem; height: .5rem; border-radius: 50%; background: var(--line); transition: background .2s, transform .2s; }
+.legend a:hover { text-decoration: none; background: rgba(0,0,0,.05); color: var(--fg); }
+.legend a.is-active { color: var(--fg); font-weight: 700; }
+.legend li.ext { border-top: 1px solid rgba(0,0,0,.08); margin-top: .25rem; padding-top: .25rem; }
+.legend li.ext a::before { background: var(--accent); }
+.legend a.is-active::before { background: #c84b3a; transform: scale(1.3); }
+@media (max-width: 1340px) { .legend a { font-size: 0; gap: 0; padding: .3rem .35rem; } .legend a::before { width: .6rem; height: .6rem; } .legend { padding: .5rem .35rem; } .legend a:hover { font-size: .78rem; gap: .55rem; } }
+@media (max-width: 900px) { .legend { display: none; } }
+.subsec { margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid var(--line); }
+.subtitle-h { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 600; text-align: center; margin-bottom: 1.2rem; }
+.warn { background: #fff8e1; border: 1px solid #f0d98a; border-left: 5px solid #d9a400; border-radius: 10px; padding: .8rem 1rem; color: #5c4400; font-size: .98rem; line-height: 1.5; margin-top: 1.2rem; }
+.warn b { display: block; font-family: var(--font-title); font-size: 1.05rem; margin-bottom: .2rem; }
+/* Questions, answers, takeaways, isolating experiments */
+.q { background: #fdecea; border: 1px solid #f1b2aa; border-left: 5px solid #c84b3a; border-radius: 10px; padding: .7rem 1rem; color: #7a2619; font-family: var(--font-title); font-weight: 600; font-size: 1.12rem; line-height: 1.35; margin-bottom: .9rem; text-align: left; }
+.q .qk { display: block; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; opacity: .8; margin-bottom: .15rem; }
+.answer { font-size: 1.05rem; line-height: 1.45; margin: .6rem 0 1rem; padding: .6rem .9rem; background: #eef3fb; border-left: 4px solid #1f4f9a; border-radius: 0 8px 8px 0; text-align: left; }
+.answer b { color: #1f4f9a; }
+.task .eyebrow { margin-bottom: .2rem; }
+.tk-q { text-align: center; font-family: var(--font-title); font-weight: 600; font-size: clamp(1.15rem, 2.2vw, 1.5rem); color: var(--fg-muted); max-width: 40ch; margin: 0 auto .6rem; line-height: 1.3; text-wrap: balance; }
+.takeaways { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+@media (min-width: 1100px) { .takeaways { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .takeaways { grid-template-columns: 1fr; } }
+.tk { background: var(--box); border-radius: 14px; padding: 1.2rem 1.3rem; border-top: 5px solid #c84b3a; }
+.tk-n { font-family: var(--font-title); font-size: 1rem; font-weight: 700; line-height: 1; width: 2rem; height: 2rem; border-radius: 50%; background: #c84b3a; color: #fff; display: inline-flex; align-items: center; justify-content: center; }
+.tk-n small { font-size: 1rem; font-weight: 400; color: var(--fg-light); margin: 0 .1rem; }
+.tk-h { font-family: var(--font-title); font-weight: 600; font-size: 1.3rem; margin: .7rem 0 .4rem; line-height: 1.25; }
+.tk-t { font-size: .92rem; color: var(--fg-muted); line-height: 1.5; }
+.iso { margin-top: 2.5rem; padding-top: 2.5rem; border-top: 1px solid var(--line); }
+.iso-head { max-width: 780px; margin: 0 auto 1.5rem; }
+.iso-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.4rem; align-items: start; }
+.iso-col { min-width: 0; background: var(--box); border-radius: 14px; padding: 1.1rem 1.1rem 1.2rem; }
+.iso-col h3 { font-size: 1.2rem; font-weight: 600; margin: .3rem 0 .3rem; }
+.iso-cell { min-width: 0; }
+.iso-tag { display: block; text-align: center; font-family: var(--font-title); font-size: .85rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--fg); background: none; padding: 0; margin: 0 0 .55rem; border-radius: 0; }
+.iso-col .answer { font-size: .95rem; margin: .5rem 0 .9rem; }
+.iso-col .figs { display: flex; flex-direction: column; gap: .8rem; margin-bottom: .9rem; }
+.rl-link { text-align: center; margin: -.5rem 0 1.8rem; }
+.task .strat-row { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; margin: .2rem 0 1rem; }
+.strat-row figure { margin: 0; min-width: 0; }
+.strat-row img { display: block; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px; }
+.strat-row .sim { position: relative; }
+.strat-row .strat-t { font-family: var(--font-title); font-size: 1.05rem; font-weight: 700; color: var(--fg); margin: 0 0 .45rem; text-align: center; }
+.task .strat-h { grid-column: 1 / -1; clear: both; font-family: var(--font-title); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-muted); margin: .6rem 0 .5rem; }
+.strat-row figcaption { margin-top: .5rem; font-size: .88rem; line-height: 1.45; color: var(--fg-muted); }
+.strat-row figcaption b { color: var(--fg); }
+@media (max-width: 640px) { .strat-row { grid-template-columns: 1fr; } }
+.chart-row > .hchart, .chart-row > .chart-take { max-width: 46rem; margin-left: auto; margin-right: auto; }
+.chart-row { grid-column: 1 / -1; }
+.iso-col .chart-row { margin-bottom: .9rem; }
+
+/* ---- HTML bar charts (animate once on first view, then stay) ---- */
+.chart-take { display: block; margin: .9rem 0 0; padding: .9rem 1.2rem 1rem; border: 1px solid #bfe0c9; border-left: 5px solid #2f8f4e; border-radius: 12px; background: #eaf7ee; color: #173f26; }
+.chart-take .ct-k { font-family: var(--font-title); font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: #2f8f4e; margin-bottom: .35rem; }
+.chart-take li::marker { color: #2f8f4e; }
+.chart-take ul { margin: 0; padding-left: 1.2rem; }
+.chart-take li { font-size: .95rem; line-height: 1.5; margin: .2rem 0; }
+/* Method taxonomy: strategy switcher, brief, and four axis panels with evidence */
+.tax { display: grid; gap: 1.1rem; --c: #5b6472; }
+.tax-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .6rem; max-width: 46rem; width: 100%; margin: 0 auto .2rem; }
+.tax-step { display: flex; justify-content: center; gap: .55rem; align-items: center; text-align: center; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: .7rem .9rem; cursor: pointer; font-family: var(--font-title); color: var(--fg); transition: background .2s, border-color .2s, box-shadow .2s; }
+.tax-step i { width: .8rem; height: .8rem; border-radius: 50%; background: var(--c); flex: none; }
+.tax-step b { font-size: .95rem; font-weight: 600; line-height: 1.2; }
+.tax-step:hover { border-color: var(--c); }
+.tax-step.is-active { border-color: var(--c); background: color-mix(in srgb, var(--c) 9%, #fff); box-shadow: inset 0 -3px 0 var(--c); }
+.tax-step:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
+.tax-axes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; }
+.tax-axis { min-width: 0; display: grid; grid-row: span 3; grid-template-rows: subgrid; gap: .75rem; background: #fff; border: 1px solid var(--line); border-top: 4px solid var(--ax, var(--accent)); border-radius: 12px; padding: .95rem 1.1rem 1rem; }
+.tax-axis .ah { display: flex; align-items: baseline; gap: .6rem; flex-wrap: nowrap; align-content: flex-start; }
+.tax-axis .an { flex: none; }
+.tax-axis .aq { flex: 1; min-width: 0; }
+.tax-axis .an { font: 700 .66rem/1 var(--font-title); letter-spacing: .09em; text-transform: uppercase; color: var(--ax, var(--accent)); }
+.tax-axis .aq { font: 600 1.04rem/1.3 var(--font-title); color: var(--fg); text-wrap: balance; }
+.tax-axis .ev { margin: 0; min-width: 0; }
+.tax-axis .ev-img { display: block; width: 100%; max-width: 100%; aspect-ratio: 8 / 5; object-fit: cover; border-radius: 8px; background: #e4e4e4; }
+.tax-axis .ev-wrap { position: relative; }
+.tax-axis .ev-tag { position: absolute; top: .5rem; left: .5rem; z-index: 1; font-family: var(--font-title); font-size: .62rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: .22rem .55rem; border-radius: 999px; color: #fff; background: rgba(0,0,0,.62); white-space: nowrap; max-width: calc(100% - 1rem); overflow: hidden; text-overflow: ellipsis; }
+.tax-axis .ev-wrap.is-pair .ev-tag { max-width: calc(50% - .9rem); }
+.tax-axis .ev-tag.r { left: calc(50% + .5rem + 2px); }
+.tax-axis .ev-why { margin: .55rem 0 0; font-size: .9rem; line-height: 1.45; color: var(--fg); }
+.tax-axis .track { position: relative; height: 68px; margin: .4rem .4rem 0; }
+.tax-axis .line { position: absolute; left: 0; right: 0; top: 30px; height: 3px; border-radius: 2px; background: color-mix(in srgb, var(--ax, #888) 55%, #fff); }
+.tax-axis .line::before, .tax-axis .line::after { content: ""; position: absolute; top: -3px; width: 9px; height: 9px; border-radius: 50%; background: var(--ax, #888); }
+.tax-axis .line::before { left: -4px; }
+.tax-axis .line::after { right: -4px; }
+.tax-axis .end { position: absolute; top: 46px; width: 47%; font-family: var(--font-title); font-size: .7rem; letter-spacing: .07em; text-transform: uppercase; color: var(--ax, var(--fg-muted)); line-height: 1.3; }
+.tax-axis .end.l { left: 0; }
+.tax-axis .end.r { right: 0; text-align: right; }
+.tax-mark { position: absolute; top: 31.5px; transform: translate(-50%, -50%); width: 18px; height: 18px; border-radius: 50%; background: var(--c); border: 2px solid #fff; display: none; box-shadow: 0 0 0 2px var(--c), 0 0 0 7px color-mix(in srgb, var(--c) 16%, transparent); }
+.tax-mark.is-cur { display: block; }
+.tax-mark span { display: none; }
+.tax-mark.is-cur span { display: block; position: absolute; left: 50%; top: -1.75rem; transform: translateX(calc(-100% * var(--p, .5))); white-space: nowrap; font: 600 .72rem/1 var(--font-title); color: var(--c); }
+@media (max-width: 760px) { .tax-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tax-axes { grid-template-columns: 1fr; } .tax-axis { grid-row: auto; grid-template-rows: none; } .tax-axis .end { width: 48%; font-size: .7rem; } }
+@media (prefers-reduced-motion: reduce) { .tax-step, .tax-mark { transition: none; } }
+
+@media (max-width: 640px) {
+  .hw { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; }
+  .hw .label { font-size: .92rem; }
+  .task .strat-row { grid-template-columns: 1fr; }
+  .hchart svg + svg { margin-top: .6rem; }
+}
+@media (max-width: 480px) {
+  .her-ee.res { --fl: 44px; gap: .3rem .45rem; }
+  .her-ee.res .ee-group { padding: 1rem .4rem .2rem; gap: .25rem; }
+  .her-ee.res .ee img { height: 38px; }
+  .her-ee.res .ee img.cam { height: 30px; }
+  .hero-head { gap: .5rem .9rem; font-size: .9rem; }
+}
+@media (max-width: 640px) {
+  /* Phone hero: a compact title block laid over the clip, with the hero kept short so the clip is cropped as little as possible. */
+  .hero { min-height: 0; }
+  .hero-video video { object-fit: cover; object-position: 55% 50%; }
+  .hero .overlay { background: linear-gradient(180deg, rgba(0,0,0,.45) 0, rgba(0,0,0,.25) 30%, rgba(0,0,0,.45) 70%, rgba(0,0,0,.6) 100%); }
+  .hero-head { justify-content: center; flex-wrap: nowrap; gap: .15rem; padding-block: .4rem; font-size: .86rem; }
+  .hero-head a, .hero-head span.soon { padding: .35rem .55rem; gap: .3rem; }
+  .hero-body { padding-block: .9rem 1rem; }
+  .hero-body .container { padding-block: .4rem; }
+  .hero-title { font-size: 2rem; }
+  .hero-sub { font-size: 1rem; margin-top: .5rem; }
+  .hero-authors { font-size: .86rem; margin-top: .6rem; line-height: 1.35; }
+  .hero-aff img { height: 24px; margin-top: .55rem; }
+  .hero-links { margin-top: .8rem; gap: .4rem; }
+  .hero-links .btn { padding: .42rem .8rem; font-size: .86rem; }
+}
+
+.hchart { margin: 0; border: 1px solid var(--line); border-radius: 12px; background: #fff; padding: 1rem 1.1rem .8rem; }
+.hchart .hc-head h4 { margin: 0; font-family: var(--font-title); font-size: 1.15rem; font-weight: 700; }
+.hchart .hc-head p { margin: .15rem 0 .4rem; font-size: .84rem; color: var(--fg-muted); }
+.hchart svg { display: block; width: 100%; height: auto; font-family: var(--font-title); }
+.hchart .grid line { stroke: #e3e5e9; stroke-width: 1.5; }
+.hchart .axis line { stroke: #b9bec7; stroke-width: 2; }
+.hchart .tick { fill: #6b7280; font-size: 24px; }
+.hchart .glabel { fill: #1f2328; font-size: 26px; font-weight: 700; }
+.hchart .blabel { fill: #6b7280; font-size: 23px; }
+.hchart .ptitle { fill: #1f2328; font-size: 27px; font-weight: 700; }
+.hchart .val { fill: #1f2328; font-size: 27px; font-weight: 700; paint-order: stroke; stroke: #fff; stroke-width: 7px; stroke-linejoin: round; opacity: 0; transition: opacity .45s ease; }
+.hchart .lval { font-size: 24px; font-weight: 700; opacity: 0; transition: opacity .45s ease; }
+.hchart .bar { transform: scaleY(0); transform-box: fill-box; transform-origin: center bottom; transition: transform .75s cubic-bezier(.2,.75,.25,1); }
+.hchart .dash { opacity: 0; transition: opacity .25s ease; }
+.hchart .frame { opacity: 0; transition: opacity .4s ease; }
+.hchart.is-in .frame, .hchart.is-in .val, .hchart.is-in .lval, .hchart.is-in .dash { opacity: 1; }
+.hchart.is-in .bar { transform: scaleY(1); }
+.hchart .hc-legend { display: flex; flex-wrap: wrap; gap: .35rem 1.1rem; margin-top: .55rem; font-size: .8rem; color: var(--fg-muted); opacity: 0; transition: opacity .5s ease; }
+.hchart.is-in .hc-legend { opacity: 1; }
+.hchart .hc-legend span { display: inline-flex; align-items: center; gap: .4rem; }
+.hchart .hc-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
+.hchart .hc-legend i.ln { width: 26px; height: 0; border-top: 3px dashed #d2306a; border-radius: 0; }
+.hchart .hc-legend i.ln.ora { border-top: 3px dotted #1fa35a; }
+.hchart .bar:hover { filter: brightness(.9); }
+@media (prefers-reduced-motion: reduce) { .hchart .bar, .hchart .val, .hchart .lval, .hchart .dash, .hchart .frame, .hchart .hc-legend { transition: none !important; transition-delay: 0s !important; } }
+.chart { border-radius: 12px; border: 1px solid var(--line); background: #fff; }
+.chart video { display: block; width: 100%; }
+.iso-col .content { font-size: .92rem; text-align: left; }
+.iso-col .quad { grid-template-columns: 1fr 1fr; }
+.iso-col .pair { grid-template-columns: 1fr; }
+.iso-col .caption { font-size: .82rem; }
+.iso-col .clipw figcaption { font-size: .78rem; }
+@media (min-width: 861px) {
+  .iso-grid { align-items: stretch; }
+  .iso-cell { display: grid; grid-template-rows: subgrid; grid-row: span 8; }
+  .iso-col { display: grid; grid-template-rows: subgrid; grid-row: span 7; align-content: start; }
+  .iso-col .clipw figcaption { min-height: calc(2 * 1.4em); }
+}
+@media (max-width: 860px) { .iso-grid { grid-template-columns: 1fr; } }
+@media (min-width: 521px) and (max-width: 900px) { .task .her-ee.res .ee figcaption.wrap { white-space: normal; text-align: center; max-width: 7rem; } .task .her-ee.res > .ee-group { max-width: 100%; min-width: 0; } }
+/* Method viewer: one slide per task, tabs + horizontal snap scroll */
+.her { margin-top: 1.5rem; }
+.her-tabs { display: grid; grid-template-columns: repeat(6, 1fr); gap: .45rem; margin-bottom: .9rem; }
+.her-tab { font: inherit; font-family: var(--font-title); font-weight: 600; font-size: .92rem; line-height: 1.15; color: var(--fg); background: var(--box); border: 1px solid var(--line); border-radius: 12px; padding: .5rem .45rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .2rem; min-width: 0; }
+.her-tab small { font-family: var(--font-body); font-weight: 400; font-size: .68rem; line-height: 1.25; color: var(--fg-muted); }
+.her-tab:hover { border-color: var(--fg-light); }
+.her-tab.is-active { background: var(--dark-btn); color: #fff; border-color: var(--dark-btn); }
+.her-tab.is-active small { color: #d8d8d8; }
+.her-track { display: flex; align-items: flex-start; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; border-radius: 16px; outline-offset: 4px; transition: height .3s ease; }
+.her-track::-webkit-scrollbar { display: none; }
+.her-slide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; scroll-snap-stop: always; padding: .9rem 1rem 1rem; background: var(--box); border-radius: 16px; }
+.her-slide + .her-slide { margin-left: .75rem; }
+.her-slide .head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .7rem; margin-bottom: .6rem; }
+.her-slide h3 { font-size: 1.1rem; font-weight: 600; margin: 0; }
+.her-slide .sub { font-size: .82rem; color: var(--fg-muted); margin: 0; }
+.her-ee.res { margin: .8rem 0 1rem; --fl: clamp(40px, 4.5vw, 60px); gap: .4rem .6rem; }
+.her-ee.res .ee-group { background: var(--box, #f4f4f4); padding: 1.1rem .55rem .25rem; gap: .35rem; }
+.her-ee.res .ee img { height: 44px; max-width: min(110px, 100%); }
+.her-ee.res .ee img.cam { height: 34px; }
+.her-ee.res .ee img[src="icon_genrobot.svg"] { height: 48px; }
+.her-ee.res .ee figcaption { font-size: .62rem; }
+.her-ee.res .ee-arrow { font-size: 1.3rem; }
+.iso-col .her-ee.res .ee-group { background: #fff; }
+.her-ee { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: .4rem 1rem; margin: -.1rem 0 .8rem; }
+.her-ee > .ee-group:first-child { justify-self: end; } .her-ee > .ee-group.tgt { justify-self: start; } .her-ee > .ee-arrow { justify-self: center; }
+.ee-group { display: flex; align-items: flex-end; gap: .5rem; padding: 1.15rem .7rem .3rem; background: transparent; border: 1px solid var(--line-hi, #c4c4c4); border-radius: 12px; position: relative; }
+.ee-group .ee-k { position: absolute; top: .3rem; left: 50%; transform: translateX(-50%); white-space: nowrap; font-family: var(--font-title); font-size: .6rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--fg-light); background: transparent; padding: 0; }
+.ee-group.tgt { border-color: var(--accent); } .ee-group.tgt .ee-k { color: var(--accent); }
+.ee { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: .15rem; min-width: 0; }
+.ee img { height: 56px; width: auto; max-width: min(150px, 100%); object-fit: contain; display: block; }
+.her-ee { --fl: clamp(56px, 7vw, 92px); }  /* Default UMI finger length; the others follow the true size ratios measured from the paper's EE boxes (Fig. 4-6) */
+.ee img[src$="_h.png"] { width: var(--fl); height: auto; max-width: none; }
+.ee img[src="finger_umift_h.png"] { width: calc(var(--fl) * .80); }
+.ee img[src="finger_umiair_h.png"] { width: calc(var(--fl) * .53); }
+.ee img.cam { height: 42px; width: auto; max-width: none; }
+.ee img[src="icon_genrobot.svg"] { height: 60px; }
+.ee figcaption { font-size: .68rem; color: var(--fg-muted); line-height: 1.2; white-space: nowrap; }
+.ee-plus { font-size: 1rem; color: var(--fg-light); align-self: center; margin: 0 -.1rem; padding-bottom: .9rem; }
+.ee-arrow { font-size: 1.5rem; line-height: 1; color: var(--fg); }
+@media (max-width: 520px) { .ee img { height: 46px; max-width: min(120px, 100%); } .ee img[src$="_h.png"] { width: var(--fl); height: auto; } .ee img.cam { height: 34px; } .her-ee { gap: .4rem .6rem; } .her-ee .ee figcaption.wrap { white-space: normal; text-align: center; max-width: 7.5rem; } .her-ee > .ee-group { max-width: 100%; min-width: 0; } .ee-group { padding: 1.1rem .5rem .3rem; } }
+.her-pair { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+.her-pair .clipw figcaption { font-size: .78rem; margin-top: .3rem; }
+.her-pair .clip video { aspect-ratio: 16 / 9; }
+.her-pair .ph { aspect-ratio: 16 / 9; }
+.her-quad { display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem; margin-top: .8rem; --ar: 16 / 9; }
+.her-quad .tile .label { font-size: .92rem; margin-bottom: .3rem; }
+.her-quad .media video { aspect-ratio: var(--ar); object-fit: cover; }
+.her-quad .media { position: relative; }
+.her-quad .media .tag { position: absolute; top: .45rem; left: .45rem; z-index: 1; font-family: var(--font-title); font-size: .62rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: .18rem .5rem; border-radius: 999px; color: #fff; background: rgba(0,0,0,.6); }
+.her-quad .ph { aspect-ratio: var(--ar); padding: .6rem; gap: .25rem; }
+.her-quad .ph .w { font-size: .8rem; }
+.her-quad .ph .s { font-size: .7rem; }
+.her-quad .tile.note { grid-column: 2 / -1; display: flex; flex-direction: column; }
+.her-quad .tile.note .na { aspect-ratio: auto; flex: 1; justify-content: flex-start; text-align: left; padding: 1rem 1.3rem; font-size: .9rem; line-height: 1.5; max-width: 60ch; }
+.her-quad.cam { grid-template-columns: 1fr; justify-items: center; }
+.her-quad.cam .tile { width: min(100%, 22rem); }
+.her-quad.cam .tile.note { grid-column: auto; width: min(100%, 44rem); }
+.her-quad.cam .tile.note .na { flex: none; max-width: none; text-align: center; }
+.her-quad .na { aspect-ratio: var(--ar); border: 1px solid var(--line); border-radius: 12px; background: #ececec; color: var(--fg-light); display: flex; align-items: center; justify-content: center; text-align: center; font-size: .82rem; line-height: 1.35; padding: .8rem; }
+.her-slide .caption { margin-top: .6rem; font-size: .82rem; }
+.her-nav { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: .7rem; }
+.her-arrow { font: inherit; font-size: 1.1rem; line-height: 1; width: 2.4rem; height: 2.4rem; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+.her-arrow:hover { background: var(--box); }
+.her-dots { display: flex; gap: .45rem; }
+.her-dot { width: .6rem; height: .6rem; padding: 0; border-radius: 50%; border: 0; background: var(--line); cursor: pointer; }
+.her-dot.is-active { background: var(--dark-btn); }
+.her-legend { margin-top: 1.5rem; }
+.her-legend .tile .how { margin-top: .2rem; }
+.her-hint { text-align: center; font-size: .78rem; color: var(--fg-light); margin-top: .35rem; }
+#viewer { padding-block: 2.5rem 2rem; }
+.motive { max-width: 780px; margin: 0 auto 2.6rem; font-size: 1.08rem; line-height: 1.65; }
+.motive .eyebrow { font-size: .78rem; letter-spacing: .09em; text-transform: uppercase; color: var(--fg-light); font-weight: 600; margin: 0 0 .5rem; font-family: var(--font-title); }
+.motive p { margin: 0 0 1rem; }
+.motive .q { font-family: var(--font-title); font-weight: 600; font-size: clamp(1.2rem, 2.3vw, 1.55rem); line-height: 1.3; color: var(--fg); margin: 1.2rem 0 0; padding-left: 1rem; border-left: 4px solid var(--accent); text-wrap: balance; }
+#viewer .title { margin-bottom: .6rem; }
+.her-intro { text-align: center; font-size: .95rem; color: var(--fg-muted); max-width: 44rem; margin: 0 auto 1rem; line-height: 1.5; }
+@media (max-width: 760px) { .her-quad { grid-template-columns: 1fr 1fr; } .her-quad .tile.note { grid-column: 1 / -1; } .her-quad .tile.note .na { max-width: none; } .her-tabs { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 480px) { .her-tabs { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .her-pair { grid-template-columns: 1fr; } .her-slide { padding: .8rem; } }
+@media (prefers-reduced-motion: no-preference) { .her-track { scroll-behavior: smooth; } }
+.author img.pic { object-fit: cover; }
+@media (max-width: 640px) {
+  .hero-head { justify-content: center; font-size: .95rem; }
+  .tabs a { font-size: .9rem; padding: .7rem .6rem; }
+  .badge { bottom: 4.6rem; max-width: 16rem; font-size: .72rem; }
+  .box { padding: 2rem 1.2rem; }
+}
+@media (prefers-reduced-motion: reduce) { .hero-video video { display: none; } .hero-video { background: #222 url("hero_poster.jpg") center/cover; } }
+</style>
+
+<!-- ===== Side legend ===== -->
+<nav class="legend" aria-label="Page sections">
+  <ul>
+    <li><a href="#top" data-sec="top">Top</a></li>
+    <li><a href="#viewer" data-sec="viewer">Hide, Erase, Replace</a></li>
+    <li><a href="#overview" data-sec="overview">Takeaways</a></li>
+    <li><a href="#video" data-sec="video">Video</a></li>
+    <li><a href="#taxonomy" data-sec="taxonomy">Methods</a></li>
+    <li><a href="#design" data-sec="design">Design &amp; Hardware</a></li>
+    <li><a href="#results" data-sec="results">Results</a></li>
+    <li><a href="#downloads" data-sec="downloads">Data &amp; Checkpoints</a></li>
+    <li class="ext"><a href="rollouts.html" target="_blank" rel="noopener">All rollouts &#8599;</a></li>
+    <li><a href="#paper" data-sec="paper">Paper</a></li>
+    <li><a href="#qa" data-sec="qa">Q &amp; A</a></li>
+  </ul>
+</nav>
+
+<!-- ===== Hero ===== -->
+<section class="hero" id="top">
+  <div class="hero-video" aria-hidden="true">
+    <video playsinline autoplay muted loop poster="hero_poster.jpg"><source src="hero.mp4" type="video/mp4"></video>
+  </div>
+  <div class="overlay"></div>
+  <div class="hero-head">
+    <a href="paper.pdf"><svg viewBox="0 0 24 24"><path d="M6 2h8l6 6v14H6zM13 3.5V9h5.5zM8 13h8v1.5H8zm0 3h8v1.5H8z"/></svg>Paper</a>
+    <span class="soon" title="Link to be added"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zm2 2v12h12V6zm3 3h6v1.5H9zm0 3h6v1.5H9z"/></svg>arXiv</span>
+    <a href="#video"><svg viewBox="0 0 24 24"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg>Video</a>
+    <span class="soon" title="Link to be added"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.8c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5a3.9 3.9 0 0 1 1-2.7 3.6 3.6 0 0 1 .1-2.7s.8-.3 2.8 1a9.5 9.5 0 0 1 5 0c1.9-1.3 2.8-1 2.8-1a3.6 3.6 0 0 1 .1 2.7 3.9 3.9 0 0 1 1 2.7c0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 12 2z"/></svg>Code</a>
+  </div>
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="hero-title">Hide, Erase, or Replace?</h1>
+      <h2 class="hero-sub">An Empirical Study of Cross-Gripper Policy Transfer</h2>
+      <p class="hero-authors"><a href="https://jgoler.github.io/Jack-Personal-Website/">Jack Goler</a>, <a href="https://austinapatel.github.io/">Austin Patel</a>, <a href="https://chuerpan.com/">Chuer Pan</a>, <a href="https://shurans.github.io/">Shuran Song</a></p>
+      <p class="hero-aff"><img src="stanford_logo_white.png" alt="Stanford University" width="715" height="169"></p>
+      <div class="hero-links">
+        <a class="btn" href="paper.pdf"><svg viewBox="0 0 24 24"><path d="M6 2h8l6 6v14H6zM13 3.5V9h5.5zM8 13h8v1.5H8zm0 3h8v1.5H8z"/></svg>Paper</a>
+        <span class="btn soon">arXiv</span>
+        <a class="btn" href="#video"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>Video</a>
+        <a class="btn" href="rollouts.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H4zm2 2v7h12V7zm3 1.5 4 2-4 2zM8 18h8v1.5H8z"/></svg>Rollouts</a>
+        <span class="btn soon">Code</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Task viewer ===== -->
+<section class="section" id="viewer">
+  <div class="container">
+    <div class="motive">
+      <p class="eyebrow">Why this study</p>
+      <p>Handheld interfaces like UMI already abstract the robot away: the camera is mounted on the end effector, so the data depends on neither the arm nor its kinematics. One piece of the embodiment is still in every frame: the gripper. Suppose you were to collect data for a policy on one end-effector. How could you deploy it on another? Swap it and the observations shift exactly where the policy has learned to look, and re-collecting demonstrations for every new gripper is not practical. Three families of remedies exist: <b>hide</b> the end effector from the model's attention, <b>erase</b> it from the image, or <b>replace</b> it with the target gripper. We compare all three against the unmodified-data control under matched conditions, on six manipulation experiments across five end effectors. We conduct an empirical study to see which works.</p>
+      <p class="q">How should we handle the visual gap to deploy wrist-camera policies on a new end effector?</p>
+    </div>
+    <h2 class="title">Hide, Erase, or Replace, task by task</h2>
+    <div class="her" id="her">
+      <div class="her-tabs" role="tablist" aria-label="Task">
+        <button class="her-tab is-active" role="tab" aria-selected="true" data-i="0">Cup saucer<small>Default UMI → UMI-Air</small></button>
+        <button class="her-tab" role="tab" aria-selected="false" data-i="1">Push-T<small>Default UMI → UMI-Air</small></button>
+        <button class="her-tab" role="tab" aria-selected="false" data-i="2">Drawer<small>UMI + UMI-Air → UMI-FT</small></button>
+        <button class="her-tab" role="tab" aria-selected="false" data-i="3">Cup to lid<small>GenRobot → iPhUMI</small></button>
+        <button class="her-tab" role="tab" aria-selected="false" data-i="4">Camera swap<small>GoPro → iPhone</small></button>
+        <button class="her-tab" role="tab" aria-selected="false" data-i="5">Recycling<small>Human hand → XHand</small></button>
+      </div>
+      <div class="her-track" tabindex="0" aria-live="polite">
+    <article class="her-slide" role="tabpanel" aria-label="Cup saucer">
+      <div class="head"><h3>Cup saucer</h3><p class="sub">Source: Default UMI and UMI-FT · Target: UMI-Air · wrist views from one Default UMI demonstration</p></div>
+      <div class="her-ee"><div class="ee-group"><span class="ee-k">Source</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI" loading="lazy"><figcaption>Default UMI</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img src="finger_umift_h.png" alt="UMI-FT" loading="lazy"><figcaption>UMI-FT</figcaption></figure></div><span class="ee-arrow" aria-hidden="true">&rarr;</span><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_umiair_h.png" alt="UMI-Air" loading="lazy"><figcaption>UMI-Air</figcaption></figure></div></div>
+      <div class="her-pair">
+        <figure class="clipw"><div class="clip"><span class="tag" data-tag-a="Seen end-effector · Default UMI" data-tag-b="Seen end-effector · UMI-FT" data-switch-at="12.98">Seen end-effector · Default UMI</span><video muted loop playsinline poster="rollout_cup_success_poster.jpg" preload="none" data-autoplay="1"><source data-src="rollout_cup_source_cat.mp4" type="video/mp4"></video></div><figcaption>Two clips back to back: a stand-in UMI-Air rollout until a Default UMI clip is available, then a UMI-FT rollout.</figcaption></figure>
+        <figure class="clipw ok"><div class="clip"><span class="tag">Unseen end-effector · UMI-Air</span><video muted loop playsinline poster="rollout_cup_umiair_success_poster.jpg" preload="none" data-autoplay="1"><source data-src="rollout_cup_umiair_success.mp4" type="video/mp4"></video></div><figcaption>No adaptation finetuned on 25 UMI-Air demos: rotate, grasp, place with the handle facing left.</figcaption></figure>
+      </div>
+      <div class="her-quad" style="--ar: 4 / 3">
+        <div class="tile"><div class="label"><i style="background:#5b6472"></i>No adaptation</div><div class="media"><span class="tag" data-tag-a="Default UMI" data-tag-b="UMI-FT" data-switch-at="9.8">Default UMI</span><video muted loop playsinline poster="cup_original_cat_uw_poster.jpg" preload="none" data-autoplay="1"><source data-src="cup_original_cat_uw.mp4" type="video/mp4"></video></div></div><div class="tile"><div class="label"><i style="background:#8b6fc4"></i>Hide</div><div class="media"><video muted loop playsinline poster="cup_hide_cat_uw_poster.jpg" preload="none" data-autoplay="1"><source data-src="cup_hide_cat_uw.mp4" type="video/mp4"></video></div></div><div class="tile"><div class="label"><i style="background:#3b8fb0"></i>Erase</div><div class="media"><video muted loop playsinline poster="cup_erase_cat_uw_poster.jpg" preload="none" data-autoplay="1"><source data-src="cup_erase_cat_uw.mp4" type="video/mp4"></video></div></div><div class="tile"><div class="label"><i style="background:#ee8a3a"></i>Replace</div><div class="media"><video muted loop playsinline poster="cup_replace_cat_uw_poster.jpg" preload="none" data-autoplay="1"><source data-src="cup_replace_cat_uw.mp4" type="video/mp4"></video></div></div>
+      </div>
+    </article>
+    <article class="her-slide" role="tabpanel" aria-label="Push-T">
+      <div class="head"><h3>Push-T</h3><p class="sub">Source: Default UMI and UMI-FT · Target: UMI-Air · wrist views from one Default UMI and one UMI-FT demonstration</p></div>
+      <div class="her-ee"><div class="ee-group"><span class="ee-k">Source</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI" loading="lazy"><figcaption>Default UMI</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img src="finger_umift_h.png" alt="UMI-FT" loading="lazy"><figcaption>UMI-FT</figcaption></figure></div><span class="ee-arrow" aria-hidden="true">&rarr;</span><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_umiair_h.png" alt="UMI-Air" loading="lazy"><figcaption>UMI-Air</figcaption></figure></div></div>
+      <div class="her-pair">
+        <figure class="clipw"><div class="clip"><span class="tag" data-tag-a="Seen end-effector · Default UMI" data-tag-b="Seen end-effector · UMI-FT" data-switch-at="9.04">Seen end-effector · Default UMI</span><span class="spd">4.5×</span><video muted loop playsinline poster="rollout_pusht_source_poster.jpg" preload="none" data-autoplay="1"><source data-src="rollout_pusht_source_cat.mp4" type="video/mp4"></video></div><figcaption>Two source rollouts back to back, 4.5× speed: a Default UMI push, then a UMI-FT push.</figcaption></figure>
+        <figure class="clipw ok"><div class="clip"><span class="tag">Unseen end-effector · UMI-Air</span><span class="spd">4.5×</span><video muted loop playsinline poster="rollout_pusht_umiair_success_poster.jpg" preload="none" data-autoplay="1"><source data-src="rollout_pusht_umiair_success.mp4" type="video/mp4"></video></div><figcaption>No adaptation finetuned on 25 UMI-Air demos, played at 4.5× speed.</figcaption></figure>
+      </div>
+      <div class="her-quad" style="--ar: 4 / 3">
+        <div class="tile"><div class="label"><i style="background:#5b6472"></i>No adaptation</div><div class="media"><span class="tag" data-tag-a="Default UMI" data-tag-b="UMI-FT" data-switch-at="15.9">Default UMI</span><video muted loop playsinline poster="pusht_original_cat_uw_poster.jpg" preload="none" data-autoplay="1"><source data-src="pusht_original_cat_uw.mp4" type="video/mp4"></video></div></div><div class="tile"><div class="label"><i style="background:#8b6fc4"></i>Hide</div><div class="media"><video muted loop playsinline poster="pusht_hide_cat_uw_poster.jpg" preload="none" data-autoplay="1"><source data-src="pusht_hide_cat_uw.mp4" type="video/mp4"></video></div></div><div class="tile"><div class="label"><i style="background:#3b8fb0"></i>Erase</div><div class="media"><video muted loop playsinline poster="pusht_erase_cat_uw_poster.jpg" preload="none" data-autoplay="1"><source data-src="pusht_erase_cat_uw.mp4" type="video/mp4"></video></div></div><div class="tile"><div class="label"><i style="background:#ee8a3a"></i>Replace</div><div class="media"><video muted loop playsinline poster="pusht_replace_cat_uw_poster.jpg" preload="none" data-autoplay="1"><source data-src="pusht_replace_cat_uw.mp4" type="video/mp4"></video></div></div>
+      </div>
+    </article>
+    <article class="her-slide" role="tabpanel" aria-label="Drawer">
+      <div class="head"><h3>Drawer opening</h3><p class="sub">Source: Default UMI and UMI-Air · Target: UMI-FT</p></div>
+      <div class="her-ee"><div class="ee-group"><span class="ee-k">Source</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI" loading="lazy"><figcaption>Default UMI</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img src="finger_umiair_h.png" alt="UMI-Air" loading="lazy"><figcaption>UMI-Air</figcaption></figure></div><span class="ee-arrow" aria-hidden="true">&rarr;</span><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_umift_h.png" alt="UMI-FT" loading="lazy"><figcaption>UMI-FT</figcaption></figure></div></div>
+      <div class="her-pair">
+        <figure class="clipw"><div class="clip"><span class="tag" data-tag-a="Seen end-effector · Default UMI" data-tag-b="Seen end-effector · UMI-Air" data-switch-at="7.99">Seen end-effector · Default UMI</span><video muted loop playsinline poster="rollout_drawer_source_poster.jpg" preload="none" data-autoplay="1"><source data-src="rollout_drawer_source_cat.mp4" type="video/mp4"></video></div><figcaption>Two source rollouts back to back: Default UMI pinches the handle face and pulls, then UMI-Air hooks inside the handle.</figcaption></figure>
+        <figure class="clipw ok"><div class="clip"><span class="tag">Unseen end-effector · UMI-FT</span><video muted loop playsinline poster="rollout_drawer_umift_success_poster.jpg" preload="none" data-autoplay="1"><source data-src="rollout_drawer_umift_success.mp4" type="video/mp4"></video></div><figcaption>Zero-shot on UMI-FT from the full source set, no adaptation: pinch grasp, straight pull.</figcaption></figure>
+      </div>
+      <div class="her-quad">
+        <div class="tile"><div class="label"><i style="background:#5b6472"></i>No adaptation</div><div class="media"><span class="tag" data-tag-a="Default UMI" data-tag-b="UMI-Air" data-switch-at="6.4">Default UMI</span><video muted loop playsinline poster="drawer_original_cat_uw_poster.jpg" preload="none" data-autoplay="1"><source data-src="drawer_original_cat_uw.mp4" type="video/mp4"></video></div></div><div class="tile"><div class="label"><i style="background:#8b6fc4"></i>Hide</div><div class="media"><video muted loop playsinline poster="drawer_hide_cat_uw_poster.jpg" preload="none" data-autoplay="1"><source data-src="drawer_hide_cat_uw.mp4" type="video/mp4"></video></div></div><div class="tile"><div class="label"><i style="background:#3b8fb0"></i>Erase</div><div class="media"><video muted loop playsinline poster="drawer_erase_cat_uw_poster.jpg" preload="none" data-autoplay="1"><source data-src="drawer_erase_cat_uw.mp4" type="video/mp4"></video></div></div><div class="tile"><div class="label"><i style="background:#ee8a3a"></i>Replace</div><div class="media"><video muted loop playsinline poster="drawer_replace_cat_uw_poster.jpg" preload="none" data-autoplay="1"><source data-src="drawer_replace_cat_uw.mp4" type="video/mp4"></video></div></div>
+      </div>
+    </article>
+    <article class="her-slide" role="tabpanel" aria-label="Cup to lid">
+      <div class="head"><h3>Cup to lid: GenRobot data on iPhUMI</h3><p class="sub">Source: GenRobot gripper and stereo cameras · Target: iPhUMI with Default UMI fingers · no adaptation only</p></div>
+      <div class="her-ee"><div class="ee-group"><span class="ee-k">Source</span><figure class="ee"><img class="cam" src="icon_genrobot.svg" alt="GenRobot gripper with stereo camera" loading="lazy"><figcaption class="wrap">GenRobot gripper · stereo camera</figcaption></figure></div><span class="ee-arrow" aria-hidden="true">&rarr;</span><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI" loading="lazy"><figcaption>Default UMI</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img class="cam" src="icon_iphone.svg" alt="iPhone" loading="lazy"><figcaption>iPhone</figcaption></figure></div></div>
+      <div class="her-pair">
+        <figure class="clipw"><div class="clip"><span class="tag">Seen end-effector · GenRobot</span><video muted loop playsinline poster="rollout_genrobot_source_poster.jpg" preload="none" data-autoplay="1"><source data-src="rollout_genrobot_source.mp4" type="video/mp4"></video></div><figcaption>The GenRobot gripper, with its stereo wrist camera, picking the cup and setting it on the lid.</figcaption></figure>
+        <figure class="clipw ok"><div class="clip"><span class="tag">Unseen end-effector · iPhUMI</span><video muted loop playsinline poster="rollout_genrobot_iphumi_success_poster.jpg" preload="none" data-autoplay="1"><source data-src="rollout_genrobot_iphumi_success.mp4" type="video/mp4"></video></div><figcaption>iPhUMI on the robot, finetuned on 25 demos: pick the cup and set it on the lid.</figcaption></figure>
+      </div>
+      <div class="her-quad cam" style="--ar: 4 / 3">
+        <div class="tile"><div class="label"><i style="background:#5b6472"></i>No adaptation</div><div class="media"><video muted loop playsinline poster="genrobot_left_poster.jpg" preload="none" data-autoplay="1"><source data-src="genrobot_left.mp4" type="video/mp4"></video></div></div><div class="tile note"><div class="na">The adaptation strategies in question don’t transfer well if there is a change in cameras between training and deployment. Hence, we evaluate only no adaptation.</div></div>
+      </div>
+    </article>
+    <article class="her-slide" role="tabpanel" aria-label="Camera swap">
+      <div class="head"><h3>Cup saucer: GoPro data on the iPhone</h3><p class="sub">Source: GoPro in the UMI mount · Target: iPhone · identical Default UMI fingers, no adaptation only</p></div>
+      <div class="her-ee"><div class="ee-group"><span class="ee-k">Source</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI" loading="lazy"><figcaption>Default UMI</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img class="cam" src="icon_gopro.png" alt="GoPro" loading="lazy"><figcaption>GoPro</figcaption></figure></div><span class="ee-arrow" aria-hidden="true">&rarr;</span><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI" loading="lazy"><figcaption>Default UMI</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img class="cam" src="icon_iphone.svg" alt="iPhone" loading="lazy"><figcaption>iPhone</figcaption></figure></div></div>
+      <div class="her-pair">
+        <figure class="clipw"><div class="clip"><span class="tag">Seen camera · GoPro</span><video muted loop playsinline poster="rollout_gopro_iphone_success_poster.jpg" preload="none" data-autoplay="1"><source data-src="rollout_gopro_iphone_success.mp4" type="video/mp4"></video></div><figcaption>Cup saucer with the Default UMI gripper: grasp the cup, set it on the saucer. Inset: the GoPro wrist view, in sync.</figcaption></figure>
+        <figure class="clipw ok"><div class="clip"><span class="tag">Unseen camera · iPhone</span><video muted loop playsinline poster="rollout_gopro_iphone_target_poster.jpg" preload="none" data-autoplay="1"><source data-src="rollout_gopro_iphone_target.mp4" type="video/mp4"></video></div><figcaption>iPhone on the same Default UMI fingers, finetuned on 25 iPhone demos: grasp the cup, set it on the saucer. Inset: the iPhone wrist view, in sync.</figcaption></figure>
+      </div>
+      <div class="her-quad cam" style="--ar: 4 / 3">
+        <div class="tile"><div class="label"><i style="background:#5b6472"></i>No adaptation</div><div class="media"><video muted loop playsinline poster="gopro_wrist_poster.jpg" preload="none" data-autoplay="1"><source data-src="gopro_wrist_uw.mp4" type="video/mp4"></video></div></div><div class="tile note"><div class="na">The adaptation strategies in question don’t transfer well if there is a change in cameras between training and deployment. Hence, we evaluate only no adaptation.</div></div>
+      </div>
+    </article>
+    <article class="her-slide" role="tabpanel" aria-label="Recycling">
+      <div class="head"><h3>Recycling: human hand to XHand</h3><p class="sub">Source: human hand with a wrist-mounted iPhone · Target: XHand with the same camera</p></div>
+      <div class="her-ee"><div class="ee-group"><span class="ee-k">Source</span><figure class="ee"><img src="finger_hand.png" alt="Human hand" loading="lazy"><figcaption>Human hand</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img class="cam" src="icon_iphone.svg" alt="iPhone" loading="lazy"><figcaption>iPhone</figcaption></figure></div><span class="ee-arrow" aria-hidden="true">&rarr;</span><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_xhand.png" alt="XHand" loading="lazy"><figcaption>XHand</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img class="cam" src="icon_iphone.svg" alt="iPhone" loading="lazy"><figcaption>iPhone</figcaption></figure></div></div>
+      <div class="her-pair">
+        <figure class="clipw "><div class="clip"><span class="tag">Seen end-effector · human hand</span><video muted loop playsinline poster="demo_hand_recycling_poster.jpg" preload="none" data-autoplay="1"><source data-src="demo_hand_recycling.mp4" type="video/mp4"></video></div><figcaption>Source demonstration: a human hand wearing the wrist-mounted iPhone drops the carton into the bin.</figcaption></figure>
+        <figure class="clipw ok"><div class="clip"><span class="tag">Unseen end-effector · XHand</span><span class="spd">3×</span><video muted loop playsinline poster="rollout_xhand_success_poster.jpg" preload="none" data-autoplay="1"><source data-src="rollout_xhand_success.mp4" type="video/mp4"></video></div><figcaption>No adaptation finetuned on 25 XHand demos, same camera, 3× speed.</figcaption></figure>
+      </div>
+      <div class="her-quad">
+        <div class="tile"><div class="label"><i style="background:#5b6472"></i>No adaptation</div><div class="media"><span class="tag">Human hand</span><video muted loop playsinline poster="recycling_original_uw_poster.jpg" preload="none" data-autoplay="1"><source data-src="recycling_original_uw.mp4" type="video/mp4"></video></div></div><div class="tile"><div class="label"><i style="background:#8b6fc4"></i>Hide</div><div class="media"><video muted loop playsinline poster="recycling_hide_uw_poster.jpg" preload="none" data-autoplay="1"><source data-src="recycling_hide_uw.mp4" type="video/mp4"></video></div></div><div class="tile"><div class="label"><i style="background:#3b8fb0"></i>Erase</div><div class="media"><video muted loop playsinline poster="recycling_erase_uw_poster.jpg" preload="none" data-autoplay="1"><source data-src="recycling_erase_uw.mp4" type="video/mp4"></video></div></div><div class="tile"><div class="label"><i style="background:#ee8a3a"></i>Replace</div><div class="media"><video muted loop playsinline poster="recycling_replace_uw_poster.jpg" preload="none" data-autoplay="1"><source data-src="recycling_replace_uw.mp4" type="video/mp4"></video></div></div>
+      </div>
+    </article>
+      </div>
+      <div class="her-nav"><button class="her-arrow" type="button" data-dir="-1" aria-label="Previous task">&#8249;</button><span class="her-dots"></span><button class="her-arrow" type="button" data-dir="1" aria-label="Next task">&#8250;</button></div>
+      <p class="her-hint">Swipe or use the arrow keys to move between tasks.</p>
+    </div>
+    <div class="grid four her-legend">
+      <div class="tile"><div class="label"><i style="background:#5b6472"></i>No adaptation</div><p class="how">The source fingers stay in the frame. Nothing is done to the data or at inference.</p></div>
+      <div class="tile"><div class="label"><i style="background:#8b6fc4"></i>Hide</div><p class="how">The finger silhouette, rendered from the jaw width, is downsampled to the ViT patch grid and those tokens are dropped from attention (<a href="https://tml.stanford.edu/cloak/" target="_blank" rel="noopener">Cloak</a>-style).</p></div>
+      <div class="tile"><div class="label"><i style="background:#3b8fb0"></i>Erase</div><p class="how">Grounding DINO plus SAM 2 segment the fingers; an inpainting model (LaMa for zero-shot, MiniMax Remover for finetuning) fills the background.</p></div>
+      <div class="tile"><div class="label"><i style="background:#ee8a3a"></i>Replace</div><p class="how">After erasing, a photograph of the target fingers at the matching jaw width is composited back in from a bank captured on the target gripper.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Overview ===== -->
+<section class="section is-medium" id="overview">
+  <div class="container">
+    <p class="tk-q">Which visual adaptation strategy transfers best to a new gripper?</p>
+    <h2 class="title">Four things to take away</h2>
+    <div class="takeaways">
+      <div class="tk"><div class="tk-n">1</div><div class="tk-h">Current visual adaptation strategies hurt more than they help.</div><div class="tk-t">Hiding, erasing or replacing the fingers never beat the untouched source data on any of our tasks, zero-shot or after finetuning. Narrowing the visual gap costs the contact cues the policy relies on, so skip the preprocessing.</div></div>
+      <div class="tk"><div class="tk-n">2</div><div class="tk-h">Finetuning eliminates the need for visual adaptation.</div><div class="tk-t">Pretrain on the source data as it is, collect about 25 demonstrations on the new end-effector, and finetune. Across all tasks, finetuning on top of the unadapted source demonstrations largely recovers the source data's value.</div></div>
+      <div class="tk"><div class="tk-n">3</div><div class="tk-h">Do not count on zero-shot across a camera or embodiment change.</div><div class="tk-t">Swapping only the camera on an identical gripper, or only the hand under the same camera, drops zero-shot success to near zero. Budget for those target demos from the start.</div></div>
+      <div class="tk"><div class="tk-n">4</div><div class="tk-h">Bridging a visual gap is easier than bridging a contact gap.</div><div class="tk-t">Finetuning on 25 demos closes the mismatch between different end-effectors during training and deployment. Differences in how the source gripper made contact with the object, artifacts, altered contact information, or other consequences of modifying demos are harder to fix through finetuning.</div></div>
+    </div>
+  </div>
+  <div class="container narrow" style="margin-top:2.5rem">
+    <p class="subtitle">The surprising finding? <b>Leaving the source data untouched transfers best, zero-shot and after finetuning.</b> Methods that edit the wrist view narrow the visual gap but destroy the fine contact cues the policy needs, and that costs more than it returns.</p>
+  </div>
+</section>
+
+<!-- ===== Summary video ===== -->
+<section class="section" id="video">
+  <div class="container">
+    <h2 class="title">Technical Summary Video</h2>
+    <div class="media"><video controls playsinline poster="overview_poster.jpg" preload="metadata"><source src="overview.mp4" type="video/mp4"></video></div>
+  </div>
+</section>
+
+<!-- ===== Taxonomy (black band) ===== -->
+<section class="section" id="taxonomy">
+  <div class="container">
+    <h2 class="title">Method Taxonomy</h2>
+    <div class="tax" id="tax">
+      <div class="tax-steps" role="tablist" aria-label="Strategy"></div>
+      <div class="tax-axes"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Experimental design ===== -->
+<section class="section" id="design">
+  <div class="container">
+    <h2 class="title">Experimental Design</h2>
+    <div class="stats">
+      <div class="stat"><div class="n">6</div><div class="l">experiments</div></div>
+      <div class="stat"><div class="n">3,700+</div><div class="l">demonstrations collected</div></div>
+      <div class="stat"><div class="n">5</div><div class="l">end effectors</div></div>
+      <div class="stat"><div class="n">5</div><div class="l">tasks</div></div>
+      <div class="stat"><div class="n">~50</div><div class="l">policies trained</div></div>
+      <div class="stat"><div class="n">~1,500</div><div class="l">real-robot trials</div></div>
+    </div>
+    <div class="budget one" aria-label="Evaluation: one source policy, two target-demonstration budgets, one target">
+      <div class="bd-item bd-src"><div class="bd-duo"><div class="bd-stack two"><img src="bd_src_1.jpg" alt="" loading="lazy"><img src="bd_src_0.jpg" alt="Source demonstration with the first source gripper" loading="lazy"></div><div class="bd-stack two"><img src="bd_air_1.jpg" alt="" loading="lazy"><img src="bd_air_0.jpg" alt="Source demonstration with the second source gripper" loading="lazy"></div></div><div class="bd-l"><b>Source demos</b><span>hundreds, on multiple source end-effectors</span></div></div>
+      <div class="bd-mid">
+        <div class="bd-path zs"><div class="bd-k"><b>Zero-shot</b><span>deployed as trained</span></div><div class="bd-line"><i></i></div></div>
+        <div class="bd-path ft"><div class="bd-k"><b>Finetune</b><span>25 target demos added, then deployed</span></div><div class="bd-line"><i></i></div><div class="bd-plus">+</div><div class="bd-item bd-tgt"><div class="bd-stack tgt"><img src="bd_tgt_0.jpg" alt="" loading="lazy"><img src="bd_tgt_1.jpg" alt="" loading="lazy"><img src="bd_tgt_2.jpg" alt="" loading="lazy"></div><div class="bd-l"><b>Target demos</b><span>25, on the target</span></div></div></div>
+      </div>
+      <div class="bd-item bd-dep"><div class="bd-deploy"><img src="bd_deploy.jpg" alt="The target end effector running the task" loading="lazy"></div><div class="bd-l"><b>Deploy on target</b><span>30 trials per condition</span></div></div>
+    </div>
+    <p class="caption"><b>Two budgets per task.</b> We deploy on the target end-effector under two data budgets: zero-shot and after finetuning on 25 demonstrations of the target EE. The from-scratch policy sees only the 25 target demos. The oracle policy is trained using many demos on the target gripper to show the upper bound on the target hardware.</p>
+    <div class="subsec">
+      <h3 class="subtitle-h">Hardware</h3>
+      <div class="content narrow">
+    </div>
+    <h4 class="hw-h">End effectors</h4>
+    <div class="hw">
+      <div class="tile">
+        <div class="label">Default UMI fingers</div>
+        <div class="media light"><img src="hw_default_umi.jpg" alt="Default UMI finger: a wide orange fin-ray finger on a white base with a fiducial tag"></div>
+      </div>
+      <div class="tile">
+        <div class="label">UMI-FT fingers</div>
+        <div class="media light"><img src="hw_umift.jpg" alt="UMI-FT finger: a white finger with a sliding rack and an orange ribbed fin"></div>
+      </div>
+      <div class="tile">
+        <div class="label">UMI-Air fingers</div>
+        <div class="media light"><img src="hw_umiair.jpg" alt="UMI-Air finger: a narrow orange truss finger on a white base with a fiducial tag"></div>
+      </div>
+      <div class="tile">
+        <div class="label">GenRobot gripper</div>
+        <div class="media light"><img src="hw_genrobot.jpg" alt="GenRobot data acquisition gripper: a pistol-grip handle with a three-lens stereo camera module above a parallel-jaw gripper with blue finger pads"></div>
+      </div>
+      <div class="tile">
+        <div class="label">XHand</div>
+        <div class="media light"><img src="hw_xhand.jpg" alt="XHand dexterous five-finger robot hand"></div>
+      </div>
+      <div class="tile">
+        <div class="label">Human hand</div>
+        <div class="media light"><img src="hw_hand.jpg" alt="Open human hand, palm facing the camera"></div>
+      </div>
+    </div>
+    <h4 class="hw-h">Cameras</h4>
+    <div class="hw cams">
+      <div class="tile">
+        <div class="label">iPhone</div>
+        <div class="media light"><img src="hw_iphone.jpg" alt="iPhone wrist camera"></div>
+      </div>
+      <div class="tile">
+        <div class="label">GoPro</div>
+        <div class="media light"><img src="hw_gopro.jpg" alt="GoPro wrist camera"></div>
+      </div>
+      <div class="tile">
+        <div class="label">GenRobot stereo</div>
+        <div class="media light"><img src="hw_genrobot_cam.jpg" alt="GenRobot stereo camera module on its gripper"></div>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Results ===== -->
+<section class="section" id="results">
+  <div class="container">
+    <h2 class="title">Results</h2>
+    <p class="rl-link"><a class="btn" href="rollouts.html" target="_blank" rel="noopener">All rollout videos, every task &rarr;</a></p>
+
+    <div class="task">
+      <div class="figs">
+        <div class="pair"><figure class="clipw ok"><div class="clip"><span class="tag">Success · no adaptation + 25 demos</span><video muted loop playsinline poster="rollout_cup_umiair_success_poster.jpg" style="aspect-ratio:16 / 9" preload="none" data-autoplay="1"><source data-src="rollout_cup_umiair_success.mp4" type="video/mp4"></video><div class="her-ee res clip-tgt" aria-hidden="true"><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_umiair_h.png" alt="UMI-Air"><figcaption>UMI-Air</figcaption></figure></div></div></div><figcaption>No adaptation finetuned on 25 UMI-Air demos: rotate, grasp, place with the handle facing left.</figcaption></figure><figure class="clipw bad"><div class="clip"><span class="tag">Failure · no adaptation, zero-shot</span><video muted loop playsinline style="aspect-ratio:16 / 9" poster="rollout_cup_fail_poster.jpg" preload="none" data-autoplay="1"><source data-src="rollout_cup_fail.mp4" type="video/mp4"></video><div class="her-ee res clip-tgt" aria-hidden="true"><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_umiair_h.png" alt="UMI-Air"><figcaption>UMI-Air</figcaption></figure></div></div></div><figcaption>No adaptation, zero-shot: the rotation under-shoots and the handle still faces right.</figcaption></figure></div>
+      </div>
+      <div class="text">
+        <div class="q"><span class="qk">Question</span>Does editing the wrist view help a policy transfer to a new gripper?</div>
+        <h3>Cup saucer: initial study</h3>
+        <div class="eyebrow">Prehensile and non-prehensile contact</div>
+        <div class="her-ee res"><div class="ee-group"><span class="ee-k">Source</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI" loading="lazy"><figcaption>Default UMI</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img src="finger_umift_h.png" alt="UMI-FT" loading="lazy"><figcaption>UMI-FT</figcaption></figure></div><span class="ee-arrow" aria-hidden="true">&rarr;</span><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_umiair_h.png" alt="UMI-Air" loading="lazy"><figcaption>UMI-Air</figcaption></figure></div></div>
+        <p class="answer"><b>No.</b> Untouched source data transfers best: 53% zero-shot against 27% for the best adapted version, and every method reaches the oracle after 25 target demos.</p>
+        <div class="content">
+          <p>Place a cup on a saucer with its handle facing left. When the handle points right, the policy must first rotate the cup with the outer surface of the open gripper, then grasp and place it. Source data: 592 demonstrations (290 Default UMI, 302 UMI-FT); target UMI-Air.</p>
+          <p>Zero-shot, the unmodified source policy reaches 53% against a 93% oracle. The adapted strategies were expected to close the visual gap but widened it: hide 7%, replace 27%, erase 17%. With 25 target demonstrations every method reaches the oracle, using 5% of the oracle's data; 25 demos alone reach only 60%.</p>
+          <p>Given every method reaches oracle performance after finetuning, we seek an experiment that differentiates the effects of finetuning on each of the adaptation strategies. We expect such a separation to arise in a task that depends on precise outer-finger non-prehensile contact; this motivates our next experiment.</p>
+        </div>
+      </div>
+      <div class="chart-row"><figure class="hchart" data-chart="cup" aria-label="Success-rate bar chart"></figure>
+      <div class="chart-take"><div class="ct-k">Takeaways</div><ul>
+        <li>Editing the fingers out of the wrist view makes zero-shot transfer worse, not better.</li>
+        <li>With a handful of target demos, every strategy catches up to the oracle.</li>
+        <li>Source data helps during finetuning: finetune demos alone fall well short.</li>
+      </ul></div></div>
+    </div>
+
+    <div class="task">
+      <div class="figs">
+        <div class="pair"><figure class="clipw ok"><div class="clip"><span class="tag">Success · no adaptation + 25 demos</span><span class="spd">4.5×</span><video muted loop playsinline poster="rollout_pusht_umiair_success_poster.jpg" style="aspect-ratio:16 / 9" preload="none" data-autoplay="1"><source data-src="rollout_pusht_umiair_success.mp4" type="video/mp4"></video><div class="her-ee res clip-tgt" aria-hidden="true"><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_umiair_h.png" alt="UMI-Air"><figcaption>UMI-Air</figcaption></figure></div></div></div><figcaption>No adaptation finetuned on 25 UMI-Air demos, played at 4.5× speed.</figcaption></figure><figure class="clipw bad"><div class="clip"><span class="tag">Failure · erase + 25 demos</span><span class="spd">8.3×</span><video muted loop playsinline style="aspect-ratio:16 / 9" poster="pusht_fail_crop_poster.jpg" preload="none" data-autoplay="1"><source data-src="pusht_fail_crop.mp4" type="video/mp4"></video><div class="her-ee res clip-tgt" aria-hidden="true"><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_umiair_h.png" alt="UMI-Air"><figcaption>UMI-Air</figcaption></figure></div></div></div><figcaption>Erase finetuned on the same 25 demos, 8.3× speed: the block ends rotated off the print.</figcaption></figure></div>
+      </div>
+      <div class="text">
+        <div class="q"><span class="qk">Question</span>Does an entirely non-prehensile task separate the strategies after finetuning?</div>
+        <h3>Push-T: non-prehensile study</h3>
+        <div class="eyebrow">Non-prehensile contact</div>
+        <div class="her-ee res"><div class="ee-group"><span class="ee-k">Source</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI" loading="lazy"><figcaption>Default UMI</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img src="finger_umift_h.png" alt="UMI-FT" loading="lazy"><figcaption>UMI-FT</figcaption></figure></div><span class="ee-arrow" aria-hidden="true">&rarr;</span><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_umiair_h.png" alt="UMI-Air" loading="lazy"><figcaption>UMI-Air</figcaption></figure></div></div>
+        <p class="answer"><b>Yes.</b> The gap that cup saucer could not show opens here: after finetuning, no adaptation reaches 77% while replace stays at 50%. Misleading contact cues are harder to unlearn than the visual gap they were meant to close.</p>
+        <div class="content">
+          <p>Push a T-shaped block into a printed T outline using only the outside of the open fingers, aligning orientation first, then sliding. Success requires no point of the block more than 1.5 cm outside the print. Source data: 1,572 demonstrations (770 Default UMI, 802 UMI-FT); target UMI-Air. Harder than third-person Push-T, since the wrist camera sees local contact but little of the block's global pose.</p>
+          <p>No adaptation again gives the best zero-shot performance (43%). Unlike cup saucer, the methods now separate after finetuning, which is what lets us isolate their differences: no adaptation, where the finetuning data only has to bridge the visual gap and minor contact differences, reaches 77%, while replace, which closes the visual gap but corrupts the contact information during pretraining, reaches 50%. The replaced fingers show no real deformation, shadow or position relative to the block. The from-scratch control is 3%, so source data matters more here than on cup saucer, where 25 demos alone reached 60%.</p>
+        </div>
+      </div>
+      <div class="chart-row"><figure class="hchart" data-chart="pusht" aria-label="Success-rate bar chart"></figure>
+      <div class="chart-take"><div class="ct-k">Takeaways</div><ul>
+        <li>Here, the effects of the strategies are differentiated after finetuning.</li>
+        <li>Untouched source data performs best in both the zero-shot and finetuned regimes.</li>
+        <li>No-adaptation working best suggests that it is easier to bridge the visual gap through finetuning than the gap introduced by poor contact information.</li>
+      </ul></div></div>
+    </div>
+
+    <div class="task">
+      <div class="figs">
+        <div class="pair"><figure class="clipw ok"><div class="clip"><span class="tag">Success · no adaptation + 25 demos</span><video muted loop playsinline style="aspect-ratio:16 / 9" poster="rollout_drawer_success_poster.jpg" preload="none" data-autoplay="1"><source data-src="rollout_drawer_success.mp4" type="video/mp4"></video><div class="her-ee res clip-tgt" aria-hidden="true"><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_umift_h.png" alt="UMI-FT"><figcaption>UMI-FT</figcaption></figure></div></div></div><figcaption>Finetuned on 25 UMI-FT demos: pinch and pull.</figcaption></figure><figure class="clipw bad"><div class="clip"><span class="tag">Failure · no adaptation, zero-shot</span><video muted loop playsinline style="aspect-ratio:16 / 9" poster="rollout_drawer_hook_fail_poster.jpg" preload="none" data-autoplay="1"><source data-src="rollout_drawer_hook_fail.mp4" type="video/mp4"></video><div class="her-ee res clip-tgt" aria-hidden="true"><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_umift_h.png" alt="UMI-FT"><figcaption>UMI-FT</figcaption></figure></div></div></div><figcaption>Zero-shot: the policy picks the UMI-Air hook, which the wider UMI-FT finger cannot execute.</figcaption></figure></div>
+      </div>
+      <div class="text">
+        <div class="q"><span class="qk">Question</span>What if the source grippers solve the task in incompatible ways?</div>
+        <h3>Drawer opening: conflicting source strategies</h3>
+        <div class="eyebrow">Conflicting source strategies</div>
+        <div class="her-ee res"><div class="ee-group"><span class="ee-k">Source</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI" loading="lazy"><figcaption>Default UMI</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img src="finger_umiair_h.png" alt="UMI-Air" loading="lazy"><figcaption>UMI-Air</figcaption></figure></div><span class="ee-arrow" aria-hidden="true">&rarr;</span><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_umift_h.png" alt="UMI-FT" loading="lazy"><figcaption>UMI-FT</figcaption></figure></div></div>
+        <p class="answer"><b>Keep all of them.</b> Filtering out the strategy the target cannot execute hurt. With the full source set the policy chose the feasible pinch anyway and reached 97% after finetuning.</p>
+        <div class="content">
+          <p>Open a drawer by its handle. Default UMI and UMI-FT are too thick to enter the handle, so they pinch it and pull; UMI-Air fits inside and hooks downward. We transfer to UMI-FT, which must follow the Default UMI strategy, and ablate whether the conflicting UMI-Air demonstrations are included in pretraining (78 Default-only vs 181 total).</p>
+          <p>Filtering out the conflicting strategy hurts. With the full source, UMI-FT mostly took the compatible pinch strategy anyway and reached further toward the handle; after finetuning it always pinched, and no adaptation reached 97%.</p>
+        </div>
+      </div>
+      <div class="strat-h">Two conflicting strategies in the source data</div>
+      <div class="strat-row">
+        <figure><div class="strat-t">Hook</div><div class="sim"><img src="drawer_strategy_hook.jpg" alt="Hook strategy: the UMI-Air fingers slide into the drawer handle from above, marked with an X" loading="lazy"><div class="her-ee res clip-tgt" aria-hidden="true"><div class="ee-group"><span class="ee-k">Source</span><figure class="ee"><img src="finger_umiair_h.png" alt="UMI-Air"><figcaption>UMI-Air</figcaption></figure></div></div></div><figcaption>The UMI-Air fingers slide into the handle from above. The wide target fingers cannot fit, so this strategy is infeasible at deployment.</figcaption></figure>
+        <figure><div class="strat-t">Pinch</div><div class="sim"><img src="drawer_strategy_pinch.jpg" alt="Pinch strategy: the Default UMI fingers grasp the handle face-on, marked with a check" loading="lazy"><div class="her-ee res clip-tgt" aria-hidden="true"><div class="ee-group"><span class="ee-k">Source</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI"><figcaption>Default UMI</figcaption></figure></div></div></div><figcaption>The Default UMI fingers grasp the handle face-on and pull. This works on the target, so it is the strategy the policy must choose.</figcaption></figure>
+      </div>
+      <div class="chart-row"><figure class="hchart" data-chart="drawer" aria-label="Success-rate bar chart"></figure>
+      <div class="chart-take"><div class="ct-k">Takeaways</div><ul>
+        <li>Keeping the conflicting UMI-Air demonstrations in the source helps rather than hurts, zero-shot and after finetuning.</li>
+        <li>Extra embodiments in the pretraining data reduce overfitting to the source gripper, even when their strategy does not apply to the target.</li>
+        <li>Once again, no adaptation strategy improves on unmodified source data.</li>
+      </ul></div></div>
+    </div>
+
+    <div class="task">
+      <div class="figs">
+        <div class="pair"><figure class="clipw ok"><div class="clip"><span class="tag">Success · no adaptation + 25 demos</span><video muted loop playsinline poster="rollout_genrobot_iphumi_success_poster.jpg" style="aspect-ratio:16 / 9" preload="none" data-autoplay="1"><source data-src="rollout_genrobot_iphumi_success.mp4" type="video/mp4"></video><div class="her-ee res clip-tgt" aria-hidden="true"><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI"><figcaption>Default UMI</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img class="cam" src="icon_iphone.svg" alt="iPhone"><figcaption>iPhone</figcaption></figure></div></div></div><figcaption>iPhUMI finetuned on 25 demos: pick the cup and set it on the lid.</figcaption></figure><figure class="clipw bad"><div class="clip"><span class="tag">Failure · no adaptation, zero-shot</span><video muted loop playsinline poster="rollout_genrobot_iphumi_fail_poster.jpg" style="aspect-ratio:16 / 9" preload="none" data-autoplay="1"><source data-src="rollout_genrobot_iphumi_fail.mp4" type="video/mp4"></video><div class="her-ee res clip-tgt" aria-hidden="true"><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI"><figcaption>Default UMI</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img class="cam" src="icon_iphone.svg" alt="iPhone"><figcaption>iPhone</figcaption></figure></div></div></div><figcaption>Zero-shot GenRobot policy on iPhUMI: the cup never makes it onto the lid.</figcaption></figure></div>
+      </div>
+      <div class="text">
+        <div class="q"><span class="qk">Question</span>Does source data from a commercial robot dataset transfer to a UMI-style gripper?</div>
+        <h3>GenRobot to UMI: transferring industrial data</h3>
+        <div class="eyebrow">Camera and gripper both change</div>
+        <div class="her-ee res"><div class="ee-group"><span class="ee-k">Source</span><figure class="ee"><img class="cam" src="icon_genrobot.svg" alt="GenRobot gripper with stereo camera" loading="lazy"><figcaption class="wrap">GenRobot gripper · stereo camera</figcaption></figure></div><span class="ee-arrow" aria-hidden="true">&rarr;</span><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI" loading="lazy"><figcaption>Default UMI</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img class="cam" src="icon_iphone.svg" alt="iPhone" loading="lazy"><figcaption>iPhone</figcaption></figure></div></div>
+        <p class="answer"><b>Not zero-shot, and only modestly after finetuning.</b> Zero-shot is 0%; 25 iPhUMI demos reach 53% against 47% from scratch, about what the source policy manages on its own gripper.</p>
+        <div class="content">
+          <p>Pick up a cup of any type in any orientation and place it on a box lid. A no-adaptation policy trained on 765 GenRobot demonstrations (stereo cameras, different fingers) is deployed on the iPhUMI gripper with Default UMI fingers, zero-shot and after finetuning on 25 iPhUMI demonstrations.</p>
+          <p>Zero-shot is 0%. Finetuning reaches 53% against 47% from scratch, a marginal gain; the same pretrained policy on its own GenRobot gripper also reaches only 53%, so finetuning may have recovered most of the source data's value.</p>
+        </div>
+      </div>
+      <div class="chart-row"><figure class="hchart" data-chart="genrobot" data-wn="720" aria-label="Success-rate bar chart"></figure>
+      <div class="chart-take"><div class="ct-k">Takeaways</div><ul>
+        <li>When the camera and gripper change together, zero-shot transfer fails completely.</li>
+        <li>Finetuning recovers the source policy’s performance, but no more: the pretrained policy was the ceiling.</li>
+        <li>The gain over training from scratch is modest here because the source policy was itself limited.</li>
+      </ul></div></div>
+    </div>
+
+    <div class="iso">
+      <div class="iso-head">
+        <div class="q"><span class="qk">Question</span>What prevents zero-shot transfer: the camera or the embodiment?</div>
+        <p class="answer"><b>Either one is enough to break it.</b> Two experiments change exactly one factor each: the camera on an identical gripper, or the end effector under the same camera. Both drive zero-shot success to near zero, and 25 target demos recover most of the source data's value in both.</p>
+      </div>
+      <div class="iso-grid">
+      <div class="iso-cell"><div class="iso-tag">Camera change only</div>
+      <div class="iso-col">
+        <h3>GoPro to iPhone</h3>
+        <div class="eyebrow">Identical Default UMI fingers</div>
+        <div class="her-ee res"><div class="ee-group"><span class="ee-k">Source</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI" loading="lazy"><figcaption>Default UMI</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img class="cam" src="icon_gopro.png" alt="GoPro" loading="lazy"><figcaption>GoPro</figcaption></figure></div><span class="ee-arrow" aria-hidden="true">&rarr;</span><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI" loading="lazy"><figcaption>Default UMI</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img class="cam" src="icon_iphone.svg" alt="iPhone" loading="lazy"><figcaption>iPhone</figcaption></figure></div></div>
+        <p class="answer"><b>7% zero-shot, 87% after 25 demos</b> (oracle 93%). Same gripper, same scene; only the lens changes.</p>
+        <div class="content">
+          <p>To separate the camera from the gripper, we return to cup saucer and hold the end effector fixed (iPhUMI with Default UMI fingers), recording source demonstrations with a GoPro in the UMI camera mount and deploying with the iPhone. The fisheye GoPro and rectilinear iPhone differ in field of view, distortion, and where the fingers fall in frame. With an identical end effector there is nothing to hide, erase, or replace, so only no adaptation is evaluated.</p>
+          <p>Zero-shot, the GoPro-trained policy succeeds in 7% of trials on the iPhone. After finetuning on 25 iPhone demonstrations it reaches 87%, against a 93% oracle.</p>
+        </div>
+        <div class="figs">
+        <div class="pair"><figure class="clipw ok"><div class="clip"><span class="tag">Success · no adaptation + 25 demos</span><video muted loop playsinline poster="rollout_gopro_iphone_results_poster.jpg" style="aspect-ratio:16 / 9" preload="none" data-autoplay="1"><source data-src="rollout_gopro_iphone_results.mp4" type="video/mp4"></video><div class="her-ee res clip-tgt" aria-hidden="true"><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI"><figcaption>Default UMI</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img class="cam" src="icon_iphone.svg" alt="iPhone"><figcaption>iPhone</figcaption></figure></div></div></div><figcaption>GoPro-pretrained policy finetuned on 25 iPhone demos, deployed with the iPhone: grasp the cup, set it on the saucer.</figcaption></figure><figure class="clipw bad"><div class="clip"><span class="tag">Failure · no adaptation, zero-shot</span><span class="spd">2×</span><video muted loop playsinline poster="rollout_gopro_iphone_fail_poster.jpg" style="aspect-ratio:16 / 9" preload="none" data-autoplay="1"><source data-src="rollout_gopro_iphone_fail.mp4" type="video/mp4"></video><div class="her-ee res clip-tgt" aria-hidden="true"><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_default_h.png" alt="Default UMI"><figcaption>Default UMI</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img class="cam" src="icon_iphone.svg" alt="iPhone"><figcaption>iPhone</figcaption></figure></div></div></div><figcaption>Zero-shot GoPro policy on the iPhone, 2× speed: the gripper hovers over the cup and never commits to a grasp.</figcaption></figure></div>
+      </div>
+      <div class="chart-row"><figure class="hchart" data-chart="gopro" data-w="1000" data-wn="520" aria-label="Success-rate bar chart"></figure>
+      <div class="chart-take"><div class="ct-k">Takeaways</div><ul>
+        <li>A camera change alone, with the end-effector hardware otherwise held fixed, is enough to break zero-shot transfer.</li>
+        <li>Finetuning on a few target camera demos recovers the source policy’s full performance, close to the oracle.</li>
+        <li>The source data still carries most of the value: the same demos from scratch fall well short.</li>
+      </ul></div></div>
+        
+      </div></div>
+      <div class="iso-cell"><div class="iso-tag">Embodiment change only</div>
+      <div class="iso-col">
+        <h3>Recycling with a dexterous hand</h3>
+        <div class="eyebrow">Large embodiment change · same wrist camera</div>
+        <div class="her-ee res"><div class="ee-group"><span class="ee-k">Source</span><figure class="ee"><img src="finger_hand.png" alt="Human hand" loading="lazy"><figcaption>Human hand</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img class="cam" src="icon_iphone.svg" alt="iPhone" loading="lazy"><figcaption>iPhone</figcaption></figure></div><span class="ee-arrow" aria-hidden="true">&rarr;</span><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_xhand.png" alt="XHand" loading="lazy"><figcaption>XHand</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img class="cam" src="icon_iphone.svg" alt="iPhone" loading="lazy"><figcaption>iPhone</figcaption></figure></div></div>
+        <p class="answer"><b>0% zero-shot for every strategy, 83% after 25 demos</b> (10% from scratch). Same camera, different hand.</p>
+        <div class="content">
+          <p>Pick a drink carton from a table and place it in a recycling bin. Source demonstrations are collected by a human hand wearing a wrist-mounted iPhone (142 demonstrations); the target is an XHand dexterous hand with the same camera and a mount designed to align the wrist pose. All four strategies are evaluated with the human-hand variant of the replacement pipeline.</p>
+          <p>Zero-shot, every condition is 0%. After finetuning on 25 XHand demonstrations, no adaptation again performs best at 83%; training from scratch reaches 10%.</p>
+        </div>
+        <div class="figs">
+        <div class="pair"><figure class="clipw ok"><div class="clip"><span class="tag">Success · no adaptation + 25 demos</span><span class="spd">3×</span><video muted loop playsinline style="aspect-ratio:16 / 9" poster="rollout_xhand_success_poster.jpg" preload="none" data-autoplay="1"><source data-src="rollout_xhand_success.mp4" type="video/mp4"></video><div class="her-ee res clip-tgt" aria-hidden="true"><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_xhand.png" alt="XHand"><figcaption>XHand</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img class="cam" src="icon_iphone.svg" alt="iPhone"><figcaption>iPhone</figcaption></figure></div></div></div><figcaption>No adaptation finetuned on 25 XHand demos, same camera, 3× speed.</figcaption></figure><figure class="clipw bad"><div class="clip"><span class="tag">Failure · no adaptation, zero-shot</span><span class="spd">3×</span><video muted loop playsinline style="aspect-ratio:16 / 9" poster="rollout_xhand_fail_poster.jpg" preload="none" data-autoplay="1"><source data-src="rollout_xhand_fail.mp4" type="video/mp4"></video><div class="her-ee res clip-tgt" aria-hidden="true"><div class="ee-group tgt"><span class="ee-k">Target</span><figure class="ee"><img src="finger_xhand.png" alt="XHand"><figcaption>XHand</figcaption></figure><span class="ee-plus">+</span><figure class="ee"><img class="cam" src="icon_iphone.svg" alt="iPhone"><figcaption>iPhone</figcaption></figure></div></div></div><figcaption>No adaptation, zero-shot, 3× speed: the hand closes on the carton badly and the grasp fails.</figcaption></figure></div>
+      </div>
+      <div class="chart-row"><figure class="hchart" data-chart="recycling" data-w="1000" aria-label="Success-rate bar chart"></figure>
+      <div class="chart-take"><div class="ct-k">Takeaways</div><ul>
+        <li>A large morphology gap alone is too large for any strategy to cross zero-shot, even when the camera is the same between training and deployment.</li>
+        <li>With a few XHand demos, finetuning on unmodified human-hand data works well, far beyond training from scratch.</li>
+        <li>Once again, the adaptation strategies all trail no adaptation, suggesting that even for large embodiment gaps no adaptation works best.</li>
+      </ul></div></div>
+        
+      </div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Data and checkpoints ===== -->
+<section class="section" id="downloads">
+  <div class="container">
+    <h2 class="title">Data &amp; Checkpoints</h2>
+    <div class="content narrow"><p>Every demonstration set used in the study and the no-adaptation checkpoints it produced. Datasets are zarr replay buffers in the iPhUMI format; checkpoints are Diffusion Policy <code>.ckpt</code> files with their training config. The raw recordings behind every episode, main and ultrawide wrist video plus metadata, are in the <code>raw/</code> folder of the dataset repo.</p>
+    <p class="rl-link"><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace" target="_blank" rel="noopener">Dataset on Hugging Face &rarr;</a> <a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints" target="_blank" rel="noopener">Checkpoints on Hugging Face &rarr;</a> <a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw" target="_blank" rel="noopener">Raw demos &rarr;</a></p></div>
+    <div class="warn"><b>No in-the-wild data.</b> The datasets we collected to train these checkpoints do not include in-the-wild data. They may have limited efficacy in new deployment scenes.</div>
+    <div class="tablebox">
+      <table class="dl">
+        <thead><tr><th>Task</th><th>Source data</th><th>Target finetune set</th><th>Target oracle set</th><th>Checkpoints</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>Cup saucer</b></td>
+            <td>592 demos<br>290 Default UMI + 302 UMI-FT<br><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/resolve/main/cup_saucer/cup-saucer_default-umi_290ep.zarr.zip" target="_blank" rel="noopener">zarr · Default UMI</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/cup_saucer/default-umi" target="_blank" rel="noopener">raw</a><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/resolve/main/cup_saucer/cup-saucer_umi-ft_302ep.zarr.zip" target="_blank" rel="noopener">zarr · UMI-FT</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/cup_saucer/umi-ft" target="_blank" rel="noopener">raw</a></td>
+            <td class="n">25 UMI-Air<br><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/resolve/main/cup_saucer/cup-saucer_umi-air_finetune-25ep_build-2026-07-02.zarr.zip" target="_blank" rel="noopener">zarr</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/cup_saucer/umi-air" target="_blank" rel="noopener" title="The 25 finetune demos are listed in this folder's index.csv">raw</a></td>
+            <td class="n">469 UMI-Air<br><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/resolve/main/cup_saucer/cup-saucer_umi-air_469ep.zarr.zip" target="_blank" rel="noopener">zarr</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/cup_saucer/umi-air" target="_blank" rel="noopener">raw</a></td>
+            <td><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/cup_saucer/pretrain" target="_blank" rel="noopener" title="Pretrain on source (Default UMI + UMI-FT, 592 demos)">pretrain</a><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/cup_saucer/finetune-25" target="_blank" rel="noopener" title="Finetune on 25 UMI-Air demos">+25 finetune</a><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/cup_saucer/oracle-umi-air" target="_blank" rel="noopener" title="Oracle: trained on all 469 UMI-Air demos (target)">oracle</a><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/cup_saucer/scratch-25" target="_blank" rel="noopener" title="From scratch on 25 UMI-Air demos">scratch-25</a></td>
+          </tr>
+          <tr>
+            <td><b>Push-T</b></td>
+            <td>1,572 demos<br>770 Default UMI + 802 UMI-FT<br><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/resolve/main/push_t/push-t_source_default-umi%2Bumi-ft_1572ep.zarr.zip" target="_blank" rel="noopener">zarr</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/push_t/default-umi" target="_blank" rel="noopener">raw · Default UMI</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/push_t/umi-ft" target="_blank" rel="noopener">raw · UMI-FT</a></td>
+            <td class="n">25 UMI-Air<br><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/resolve/main/push_t/push-t_umi-air_finetune-25ep.zarr.zip" target="_blank" rel="noopener">zarr</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/push_t/umi-air" target="_blank" rel="noopener" title="The 25 finetune demos are listed in this folder's index.csv">raw</a></td>
+            <td class="n">345 UMI-Air<br><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/resolve/main/push_t/push-t_umi-air_345ep.zarr.zip" target="_blank" rel="noopener">zarr</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/push_t/umi-air" target="_blank" rel="noopener">raw</a></td>
+            <td><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/push_t/pretrain" target="_blank" rel="noopener" title="Pretrain on source (Default UMI + UMI-FT, 1,572 demos), epoch 60: zero-shot policy">pretrain</a><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/push_t/finetune-25" target="_blank" rel="noopener" title="Finetune on 25 UMI-Air demos">+25 finetune</a><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/push_t/oracle-umi-air" target="_blank" rel="noopener" title="Oracle: all 345 UMI-Air demos, epoch 15">oracle</a><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/push_t/scratch-25" target="_blank" rel="noopener" title="From scratch on 25 UMI-Air demos">scratch-25</a></td>
+          </tr>
+          <tr>
+            <td><b>Drawer</b></td>
+            <td>181 demos<br>78 Default UMI + 103 UMI-Air<br><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/resolve/main/drawer/drawer_source_default-umi%2Bumi-air_181ep.zarr.zip" target="_blank" rel="noopener">zarr · all</a><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/resolve/main/drawer/drawer_default-umi_78ep.zarr.zip" target="_blank" rel="noopener">zarr · Default only</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/drawer/default-umi" target="_blank" rel="noopener">raw · Default UMI</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/drawer/umi-air" target="_blank" rel="noopener">raw · UMI-Air</a></td>
+            <td class="n">25 UMI-FT<br><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/resolve/main/drawer/drawer_umi-ft_finetune-25ep.zarr.zip" target="_blank" rel="noopener">zarr</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/drawer/umi-ft" target="_blank" rel="noopener" title="The 25 finetune demos are listed in this folder's index.csv">raw</a></td>
+            <td class="n">79 UMI-FT<br><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/resolve/main/drawer/drawer_umi-ft_79ep.zarr.zip" target="_blank" rel="noopener">zarr</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/drawer/umi-ft" target="_blank" rel="noopener">raw</a></td>
+            <td><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/drawer/pretrain-all" target="_blank" rel="noopener" title="Pretrain on full source (Default UMI + UMI-Air, 181 demos)">pretrain (all)</a><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/drawer/pretrain-default-only" target="_blank" rel="noopener" title="Pretrain on filtered source (Default UMI only, 78 demos)">pretrain (Default only)</a><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/drawer/finetune-25" target="_blank" rel="noopener" title="Finetune on 25 UMI-FT demos from the full-source pretrain">+25 finetune</a><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/drawer/scratch-25" target="_blank" rel="noopener" title="From scratch on 25 UMI-FT demos">scratch-25</a></td>
+          </tr>
+          <tr>
+            <td><b>Cup to lid</b></td>
+            <td>765 GenRobot demos<br>stereo, 20 Hz<br><span class="btn soon" title="Source set not yet released">zarr</span><span class="btn soon raw" title="Source recordings not yet released">raw</span><br><small class="relnote">Released with the lab project this data comes from.</small></td>
+            <td class="n">25 iPhUMI<br><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/resolve/main/cup_to_lid/cup-to-lid_iphumi-default-umi_finetune-25ep.zarr.zip" target="_blank" rel="noopener">zarr</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/cup_to_lid/iphumi-default-umi" target="_blank" rel="noopener">raw</a></td>
+            <td class="n">none</td>
+            <td><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/cup_to_lid/pretrain" target="_blank" rel="noopener" title="Pretrain on 765 GenRobot demos (stereo)">pretrain</a><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/cup_to_lid/finetune-25" target="_blank" rel="noopener" title="Finetune on 25 iPhUMI demos">+25 finetune</a><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/cup_to_lid/scratch-25" target="_blank" rel="noopener" title="From scratch on 25 iPhUMI demos">scratch-25</a></td>
+          </tr>
+          <tr>
+            <td><b>Cup saucer, GoPro</b></td>
+            <td>286 GoPro demos<br>Default UMI fingers<br><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/resolve/main/cup_saucer_gopro/cup-saucer-gopro_gopro-default-umi_286ep.zarr.zip" target="_blank" rel="noopener">zarr</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/cup_saucer_gopro/gopro-default-umi" target="_blank" rel="noopener">raw</a></td>
+            <td class="n">25 iPhone<br><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/resolve/main/cup_saucer_gopro/cup-saucer-gopro_iphone-default-umi_finetune-25ep.zarr.zip" target="_blank" rel="noopener">zarr</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/cup_saucer_gopro/iphone-default-umi" target="_blank" rel="noopener">raw</a></td>
+            <td class="n">shares cup saucer</td>
+            <td><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/cup_saucer_gopro/pretrain" target="_blank" rel="noopener" title="Pretrain on 286 GoPro demos">pretrain</a><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/cup_saucer_gopro/finetune-25" target="_blank" rel="noopener" title="Finetune on 25 iPhone demos">+25 finetune</a></td>
+          </tr>
+          <tr>
+            <td><b>Recycling</b></td>
+            <td>142 human-hand demos<br>wrist iPhone<br><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/resolve/main/recycling/recycling_human-hand_142ep.zarr.zip" target="_blank" rel="noopener">zarr</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/recycling/human-hand" target="_blank" rel="noopener">raw</a></td>
+            <td class="n">25 XHand teleop<br><a class="btn" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/resolve/main/recycling/recycling_xhand_finetune-25ep.zarr.zip" target="_blank" rel="noopener">zarr</a><a class="btn raw" href="https://huggingface.co/datasets/jgoler/hide-erase-replace/tree/main/raw/recycling/xhand" target="_blank" rel="noopener">raw</a></td>
+            <td class="n">none</td>
+            <td><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/recycling/pretrain" target="_blank" rel="noopener" title="Pretrain on 142 human-hand demos">pretrain</a><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/recycling/finetune-25" target="_blank" rel="noopener" title="Finetune on 25 XHand demos">+25 finetune</a><a class="btn" href="https://huggingface.co/jgoler/hide-erase-replace-checkpoints/tree/main/recycling/scratch-25" target="_blank" rel="noopener" title="From scratch on 25 XHand demos">scratch-25</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Takeaways ===== -->
+<section class="section" id="takeaway">
+  <div class="container">
+    <div class="box">
+      <h2 class="title" style="font-size:clamp(1.5rem,3vw,2.2rem)">What we take away</h2>
+      <div class="content narrow" style="text-align:center">
+        <p style="font-size:1.2rem;line-height:1.5">Demonstrations collected on the wrong end effector are a pretraining resource, not a liability: leave them untouched, add a few target demonstrations, and the policy transfers. Today's visual adaptation methods cost more than they return.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section is-small" id="paper">
+  <div class="container">
+    <h2 class="title is-3 left">Paper, Authors, and BibTeX</h2>
+    <div class="authors">
+      <div class="author"><img class="pic" src="author_jack.jpg" alt="Jack Goler" width="600" height="600" loading="lazy"><div class="name"><a href="https://jgoler.github.io/Jack-Personal-Website/">Jack Goler</a></div><div class="role">Stanford University</div></div>
+      <div class="author"><img class="pic" src="author_austin.jpg" alt="Austin Patel" width="600" height="600" loading="lazy"><div class="name"><a href="https://austinapatel.github.io/">Austin Patel</a></div><div class="role">Stanford University</div></div>
+      <div class="author"><img class="pic" src="author_chuer.jpg" alt="Chuer Pan" width="600" height="600" loading="lazy"><div class="name"><a href="https://chuerpan.com/">Chuer Pan</a></div><div class="role">Stanford University</div></div>
+      <div class="author"><img class="pic" src="author_shuran.jpg" alt="Shuran Song" width="600" height="600" loading="lazy"><div class="name"><a href="https://shurans.github.io/">Shuran Song</a></div><div class="role">Stanford University</div></div>
+    </div>
+    <div class="hero-links" style="margin-top:2rem">
+      <a class="btn" href="paper.pdf"><svg viewBox="0 0 24 24"><path d="M6 2h8l6 6v14H6zM13 3.5V9h5.5zM8 13h8v1.5H8zm0 3h8v1.5H8z"/></svg>Download the paper (PDF)</a>
+    </div>
+<pre>@article{goler2026hideerase,
+  title   = {Hide, Erase, or Replace? An Empirical Study of Cross-Gripper Policy Transfer},
+  author  = {Goler, Jack and Patel, Austin and Pan, Chuer and Song, Shuran},
+  year    = {2026},
+  note    = {[venue to be added]}
+}</pre>
+  </div>
+</section>
+
+<!-- ===== Q & A ===== -->
+<section class="section is-small" id="qa">
+  <div class="container narrow qa">
+    <h2 class="title is-3 left">Questions &amp; Answers</h2>
+    <h3>If no adaptation wins, why study hide, erase, and replace at all?</h3>
+    <p class="content">Each prior method was introduced on a task where it helped, but none had been compared against the plain control under matched conditions across tasks and embodiments. The point of the study is that comparison. A practitioner with a dataset on one end effector and a robot with another now has a baseline to beat before paying for a transformation pipeline.</p>
+    <h3>Why does editing the wrist image hurt?</h3>
+    <p class="content">The region the methods remove or re-render is exactly where the policy learns to look: the finger-object boundary. Finger deformation, shadows, and the relative position of finger and object tell the policy whether contact is happening and where. Hiding and erasing delete that signal; replacement draws fingers that were never actually touching the object. The visual gap shrinks, but the contact signal is gone.</p>
+    <h3>How do you handle different finger lengths between grippers?</h3>
+    <p class="content">We move each gripper's tool-center-point to its fingertip and express relative actions in the source frame during training, then command the target's own TCP at deployment. On the drawer task this choice matters: deploying zero-shot on UMI-FT with its own TCP succeeds in 73% of trials, against 57% commanded to the Default UMI TCP and 50% commanded to the UMI-Air TCP.</p>
+    <h3>How much does 25 target demonstrations buy?</h3>
+    <p class="content">A lot, as long as there is source data behind it. On cup saucer, 25 demos alone reach 60%; with 592 source demos on other grippers they reach the 93% oracle. On drawer and recycling the from-scratch control is 3% and 10%, while the finetuned no-adaptation policy reaches 97% and 83%.</p>
+    <h3>Would adaptation help at a larger scale?</h3>
+    <p class="content">Possibly, but our results argue against expecting it. If a transformation does not help in the low-diversity regime we study, where the visual gap dominates, there is little reason to believe it becomes useful once embodiment diversity in the data grows and visual alignment matters less. We leave action-space representation and larger-scale mixing to future work.</p>
+  </div>
+</section>
+
+<!-- ===== Media checklist (remove before launch) ===== -->
+<footer class="footer">
+  <p>Website design follows the <a href="https://umi-under-water.github.io/">UMI-Underwater</a> project page, itself built on the <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> template.</p>
+  <p>Hide, Erase, or Replace? · Stanford University · 2026</p>
+</footer>
+<script>
+(function () {
+  var her = document.getElementById('her'); if (!her) return;
+  var track = her.querySelector('.her-track');
+  var slides = Array.prototype.slice.call(track.children);
+  var tabs = Array.prototype.slice.call(her.querySelectorAll('.her-tab'));
+  var dotsBox = her.querySelector('.her-dots');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cur = 0, timer = null;
+  slides.forEach(function (_, i) {
+    var d = document.createElement('button'); d.type = 'button'; d.className = 'her-dot';
+    d.setAttribute('aria-label', 'Task ' + (i + 1) + ' of ' + slides.length);
+    d.addEventListener('click', function () { go(i); }); dotsBox.appendChild(d);
+  });
+  var dots = Array.prototype.slice.call(dotsBox.children);
+  function fit() { var h = slides[cur].offsetHeight; if (h) track.style.height = h + 'px'; }
+  if (window.ResizeObserver) { var ro = new ResizeObserver(function () { fit(); }); slides.forEach(function (sl) { ro.observe(sl); }); }
+  window.addEventListener('load', fit);
+  function setActive(i) {
+    cur = i; fit();
+    tabs.forEach(function (t, j) { t.classList.toggle('is-active', j === i); t.setAttribute('aria-selected', j === i ? 'true' : 'false'); });
+    dots.forEach(function (d, j) { d.classList.toggle('is-active', j === i); });
+    slides.forEach(function (sl, j) {
+      Array.prototype.forEach.call(sl.querySelectorAll('video'), function (v) {
+        if (j === i) { if (window.__loadVideo) window.__loadVideo(v); var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+        else { v.removeAttribute('autoplay'); v.pause(); }
+      });
+    });
+  }
+  function go(i) {
+    i = (i + slides.length) % slides.length;
+    track.scrollTo({ left: i * track.clientWidth, behavior: reduce ? 'auto' : 'smooth' });
+    setActive(i);
+  }
+  tabs.forEach(function (t) { t.addEventListener('click', function () { go(+t.getAttribute('data-i')); }); });
+  Array.prototype.forEach.call(her.querySelectorAll('.her-arrow'), function (b) {
+    b.addEventListener('click', function () { go(cur + (+b.getAttribute('data-dir'))); });
+  });
+  track.addEventListener('scroll', function () {
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      var i = Math.round(track.scrollLeft / track.clientWidth);
+      if (i !== cur && i >= 0 && i < slides.length) setActive(i);
+    }, 90);
+  });
+  track.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') { go(cur + 1); e.preventDefault(); }
+    if (e.key === 'ArrowLeft') { go(cur - 1); e.preventDefault(); }
+  });
+  window.addEventListener('resize', function () { track.scrollTo({ left: cur * track.clientWidth, behavior: 'auto' }); fit(); });
+  setActive(0);
+})();
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.legend a[data-sec]'));
+  if (!links.length) return;
+  var secs = links.map(function (l) { return document.getElementById(l.getAttribute('data-sec')); });
+  var legend = document.querySelector('.legend'), hero = document.getElementById('top');
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var heroEnd = hero ? hero.offsetTop + hero.offsetHeight : 0;
+    if (legend) legend.classList.toggle('is-visible', window.scrollY > heroEnd - window.innerHeight * 0.5);
+    var y = window.scrollY + window.innerHeight * 0.35, idx = 0;
+    secs.forEach(function (sec, i) { if (sec && sec.offsetTop <= y) idx = i; });
+    links.forEach(function (l, i) { l.classList.toggle('is-active', i === idx); });
+  }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+(function () {
+  Array.prototype.slice.call(document.querySelectorAll('.tag[data-switch-at]')).forEach(function (tag) {
+    var video = tag.parentNode.querySelector('video'), at = parseFloat(tag.getAttribute('data-switch-at'));
+    if (!video) return;
+    video.addEventListener('timeupdate', function () {
+      var t = video.currentTime >= at ? tag.getAttribute('data-tag-b') : tag.getAttribute('data-tag-a');
+      if (tag.textContent !== t) tag.textContent = t;
+    });
+  });
+})();
+(function () {
+  var COL = { na: '#5b6472', hide: '#8b6fc4', erase: '#3b8fb0', replace: '#ee8a3a', scr: '#d2306a', ora: '#1fa35a' };
+  var NAME = { na: 'No adaptation', hide: 'Hide', erase: 'Erase', replace: 'Replace' };
+  function four(a, b, c, d) { return [{ v: a, c: 'na' }, { v: b, c: 'hide' }, { v: c, c: 'erase' }, { v: d, c: 'replace' }]; }
+  var LEG4 = ['na', 'hide', 'erase', 'replace'];
+  var CHARTS = {
+    cup: { title: 'Cup saucer', sub: 'Default UMI + UMI-FT → UMI-Air · success rate (%) over 30 trials', legend: LEG4, lines: ['scr', 'ora'],
+      panels: [{ groups: [{ label: 'Zero-shot', bars: four(53, 7, 27, 17) }, { label: '+25 target demos', bars: four(93, 93, 97, 97) }], scratch: 60, oracle: 93 }] },
+    pusht: { title: 'Push-T', sub: 'Default UMI + UMI-FT → UMI-Air · success rate (%) over 30 trials', legend: LEG4, lines: ['scr', 'ora'],
+      panels: [{ groups: [{ label: 'Zero-shot', bars: four(43, 30, 20, 30) }, { label: '+25 target demos', bars: four(77, 47, 50, 57) }], scratch: 3, oracle: 93 }] },
+    drawer: { title: 'Drawer opening', sub: 'Default UMI (+ UMI-Air) → UMI-FT · success rate (%) over 30 trials', legend: LEG4, lines: ['scr', 'ora'],
+      panels: [{ title: '(a) No conflicting strategy: Default UMI only', groups: [{ label: 'Zero-shot', bars: four(43, 7, 17, 10) }, { label: '+25 target demos', bars: four(83, 70, 83, 77) }], scratch: 60, oracle: 93 },
+               { title: '(b) Including conflicting strategy: Default UMI + UMI-Air', groups: [{ label: 'Zero-shot', bars: four(73, 53, 53, 0) }, { label: '+25 target demos', bars: four(97, 83, 87, 80) }], scratch: 60, oracle: 93 }] },
+    genrobot: { title: 'GenRobot → UMI', sub: 'No adaptation only · success rate (%) over 30 trials', legend: null, lines: ['scr'],
+      panels: [{ groups: [{ label: 'GenRobot (source)', bars: [{ v: 53, c: 'na', l: 'pretrain' }] }, { label: 'iPhUMI (target)', bars: [{ v: 0, c: 'na', l: 'zero-shot' }, { v: 53, c: 'na', l: 'finetuned' }] }], scratch: 47, scratchGroups: [1] }] },
+    gopro: { title: 'GoPro → iPhone', sub: 'Identical Default UMI fingers · success rate (%) over 30 trials', legend: null, lines: ['scr', 'ora'],
+      panels: [{ groups: [{ label: 'iPhone (target)', bars: [{ v: 7, c: 'na', l: 'zero-shot' }, { v: 87, c: 'na', l: 'finetuned' }] }], scratch: 60, scratchGroups: [0], oracle: 93 }] },
+    recycling: { title: 'Recycling', sub: 'Human hand → XHand · success rate (%) over 30 trials', legend: LEG4, lines: ['scr'],
+      panels: [{ groups: [{ label: 'Zero-shot', bars: four(0, 0, 0, 0) }, { label: '+25 target demos', bars: four(83, 70, 67, 37) }], scratch: 10 }] }
+  };
+  var LINE_NAME = { scr: '25 target demos only (from scratch)', ora: 'oracle (all target demos)' };
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+  function text(parent, x, y, str, cls, attrs) { var t = el('text', Object.assign({ x: x, y: y, 'class': cls }, attrs || {}), parent); t.textContent = str; return t; }
+  function esc(s) { return s; }
+  function renderPanel(svg, pn, x0, x1, H, delay) {
+    var hasTitle = !!pn.title, top = hasTitle ? 70 : 34, px0 = x0 + 78, px1 = x1 - 86, py0 = top, py1 = H - 96;
+    var yv = function (v) { return py1 - (py1 - py0) * v / 100; };
+    var frame = el('g', { 'class': 'frame' }, svg);
+    if (hasTitle) text(frame, x0 + 30, 36, pn.title, 'ptitle');
+    var grid = el('g', { 'class': 'grid' }, frame), axis = el('g', { 'class': 'axis' }, frame);
+    [25, 50, 75, 100].forEach(function (v) { el('line', { x1: px0, x2: px1, y1: yv(v), y2: yv(v) }, grid); text(frame, px0 - 14, yv(v) + 8, v, 'tick', { 'text-anchor': 'end' }); });
+    text(frame, px0 - 14, py1 + 8, 0, 'tick', { 'text-anchor': 'end' });
+    el('line', { x1: px0, x2: px1, y1: py1, y2: py1 }, axis);
+    var nb = 0; pn.groups.forEach(function (g) { nb += g.bars.length; });
+    var ng = pn.groups.length, gap = 1.0, inner = 0.12;
+    var bw = Math.min(120, (px1 - px0) / (nb * (1 + inner) + (ng - 1) * gap + 1));
+    var total = nb * bw * (1 + inner) + (ng - 1) * gap * bw, cx = px0 + ((px1 - px0) - total) / 2, k = 0, d = delay;
+    pn.groups.forEach(function (g, gi) {
+      var gx0 = cx;
+      g.bars.forEach(function (b, bi) {
+        var x = cx + bi * bw * (1 + inner), h = Math.max(0, (py1 - yv(b.v)));
+        var gb = el('g', {}, svg);
+        var r = el('rect', { 'class': 'bar', x: x, y: yv(b.v), width: bw, height: Math.max(h, 0.01), rx: 4, fill: COL[b.c], style: 'transition-delay:' + d.toFixed(2) + 's' }, gb);
+        var tt = el('title', {}, r); tt.textContent = (b.l ? b.l : NAME[b.c]) + ' · ' + g.label + ': ' + b.v + '% (30 trials)';
+        text(svg, x + bw / 2, yv(b.v) - 12, b.v, 'val', { 'text-anchor': 'middle', style: 'transition-delay:' + (d + 0.55).toFixed(2) + 's' });
+        if (b.l) text(frame, x + bw / 2, py1 + 32, b.l, 'blabel', { 'text-anchor': 'middle' });
+        d += 0.12; k++;
+      });
+      cx += g.bars.length * bw * (1 + inner);
+      g._x0 = gx0; g._x1 = cx - bw * inner;
+      text(frame, (g._x0 + g._x1) / 2, py1 + (g.bars[0].l ? 66 : 42), g.label, 'glabel', { 'text-anchor': 'middle' });
+      cx += gap * bw;
+    });
+    var t = d + 0.6;
+    function hline(v, kind, lx0, lx1) {
+      var y = yv(v), seg = kind === 'scr' ? 16 : 4, step = kind === 'scr' ? 26 : 13, n = Math.floor((lx1 - lx0) / step), i;
+      var g = el('g', { 'class': 'hline' }, svg);
+      for (i = 0; i < n; i++) el('rect', { 'class': 'dash', x: lx0 + i * step, y: y - 2, width: seg, height: 4, rx: 2, fill: COL[kind], style: 'transition-delay:' + (t + i * (1.0 / n)).toFixed(3) + 's' }, g);
+      text(svg, lx1 + 12, y + 9, v, 'lval', { fill: COL[kind], style: 'transition-delay:' + (t + 1.05).toFixed(2) + 's' });
+      t += 1.3;
+    }
+    if (pn.scratch != null) {
+      var lx0 = px0 - 10, lx1 = px1;
+      if (pn.scratchGroups) { lx0 = Math.min.apply(null, pn.scratchGroups.map(function (i) { return pn.groups[i]._x0; })) - 16; lx1 = Math.max.apply(null, pn.scratchGroups.map(function (i) { return pn.groups[i]._x1; })) + 16; }
+      hline(pn.scratch, 'scr', lx0, lx1);
+    }
+    if (pn.oracle != null) hline(pn.oracle, 'ora', px0 - 10, px1);
+    return t;
+  }
+  function build(fig) {
+    var c = CHARTS[fig.getAttribute('data-chart')]; if (!c) return;
+    var head = document.createElement('div'); head.className = 'hc-head'; head.innerHTML = '<h4></h4><p></p>';
+    head.querySelector('h4').textContent = c.title; head.querySelector('p').textContent = c.sub; fig.appendChild(head);
+    var vw = window.innerWidth || 1200, narrow = vw < 640;
+    var W = narrow ? (+fig.getAttribute('data-wn') || 900) : ((vw > 860 && +fig.getAttribute('data-w')) || 1600), H = (c.panels.length > 1 && !narrow) ? 560 : 480;
+    var tEnd = 0;
+    if (narrow && c.panels.length > 1) {
+      c.panels.forEach(function (pn) { var sv = el('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img' }, fig); tEnd = Math.max(tEnd, renderPanel(sv, pn, 0, W, H, 0.35)); });
+    } else {
+      var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img' }, fig), pw = W / c.panels.length;
+      c.panels.forEach(function (pn, i) { tEnd = Math.max(tEnd, renderPanel(svg, pn, i * pw, (i + 1) * pw, H, 0.35)); });
+    }
+    var leg = document.createElement('div'); leg.className = 'hc-legend'; leg.style.transitionDelay = (tEnd - 0.6).toFixed(2) + 's';
+    (c.legend || []).forEach(function (k) { var sp = document.createElement('span'); sp.innerHTML = '<i style="background:' + COL[k] + '"></i>'; sp.appendChild(document.createTextNode(NAME[k])); leg.appendChild(sp); });
+    (c.lines || []).forEach(function (k) { var sp = document.createElement('span'); sp.innerHTML = '<i class="ln ' + k + '"></i>'; sp.appendChild(document.createTextNode(LINE_NAME[k])); leg.appendChild(sp); });
+    fig.appendChild(leg);
+  }
+  var figs = Array.prototype.slice.call(document.querySelectorAll('.hchart[data-chart]'));
+  figs.forEach(build);
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
+    }, { threshold: 0.3 });
+    figs.forEach(function (f) { io.observe(f); });
+  } else { figs.forEach(function (f) { f.classList.add('is-in'); }); }
+})();
+</script>
+<script>
+(function () {
+  var M = [
+    {k:'none', n:'No adaptation', t:'Leave the fingers as recorded', c:'#5b6472', img:'frame_original.jpg', lab:'Wrist view as recorded',
+     what:'Train on the source demonstrations exactly as recorded and deploy on the target gripper. Nothing is edited; the policy has to tolerate the new fingers on its own.',
+     keep:'Every finger-object contact cue is real and intact. No preprocessing, no extra model, works with any policy class.',
+     cost:'Does nothing about the visual gap: the target fingers look different from everything the policy has seen.',
+     ev:[{"img": "ev_none_1.jpg", "why": "Nothing is done to the data or the model: the policy trains on the recording as is.", "labs": ["As recorded"]}, {"img": "ev_none_2.jpg", "why": "Finger deformation, shadowing, slippage, and any other consequence of contact are preserved in their original form.", "labs": ["Contact during the push"]}, {"img": "ev_none_3.jpg", "why": "Only the source recordings are used. No information about the target is needed during training.", "labs": ["Source recordings only"]}, {"img": "ev_none_4.jpg", "why": "Training uses the source fingers and deployment uses the target fingers. The visual gap between them is unaddressed.", "labs": ["Training: source", "Deployment: target"]}],
+     pos:[0.5, 0.95, 0.05, 0.05]},
+    {k:'hide', n:'Hide', t:'Drop the finger tokens', c:'#8b6fc4', img:'frame_hide.jpg', lab:'Gripper tokens dropped',
+     what:'Render the gripper silhouette at the recorded jaw width, downsample it to the vision transformer’s patch grid, and drop those tokens from attention at training and at inference (<a href="https://tml.stanford.edu/cloak/" target="_blank" rel="noopener">Cloak</a>).',
+     keep:'Needs nothing about the target. Runs on the fly, so a new gripper only needs its own mask.',
+     cost:'Throws away the contact region along with the fingers. A mask has to be computed at every inference step.',
+     ev:[{"img": "ev_hide_1.jpg", "why": "A mask is rendered from the jaw width and patches belonging to the mask are dropped from the model’s attention. This is done both in training and at inference.", "labs": ["Training step", "Deployment step"]}, {"img": "ev_hide_2.jpg", "why": "The patches that cover the fingers also cover the contact, so the policy never attends to them.", "labs": ["Contact during the push"]}, {"img": "ev_hide_3.jpg", "why": "During training, only information about the source gripper’s geometry must be known. It is only during inference that we need information about the target gripper.", "labs": ["Silhouette from the jaw width"]}, {"img": "ev_hide_4.jpg", "why": "The visual gap is addressed by hiding the end-effector during both training and deployment. This puts them in the same visual space that is neither the visual space of the source nor target grippers.", "labs": ["Training, hidden", "Deployment, hidden"]}],
+     pos:[0.95, 0.05, 0.05, 0.5]},
+    {k:'erase', n:'Erase', t:'Paint the fingers out', c:'#3b8fb0', img:'frame_erase.jpg', lab:'Fingers inpainted away',
+     what:'Segment the fingers with Grounding DINO and SAM 2, then inpaint the background as if no gripper were there (LaMa for zero-shot, MiniMax Remover for finetuning).',
+     keep:'Needs nothing about the target. The result is an ordinary dataset, so training is unchanged.',
+     cost:'Contact is destroyed and replaced with hallucinated background. Heavy offline preprocessing, and erased frames are also needed at deployment.',
+     ev:[{"img": "ev_erase_1.jpg", "why": "The dataset is inpainted once before training; the policy is then trained on this transformed dataset.", "labs": ["Dataset, before", "Dataset, after"]}, {"img": "ev_erase_2.jpg", "why": "When the fingers are painted out, so is the contact between the object being manipulated and the gripper.", "labs": ["Contact during the push"]}, {"img": "ev_erase_3.jpg", "why": "Only the source fingers are segmented; nothing about the target is used.", "labs": ["Source fingers segmented"]}, {"img": "ev_erase_4.jpg", "why": "The gripper is erased during both training and deployment. Hence, the visual gap is bridged, but is not in the visual space of the source or target grippers.", "labs": ["Training, erased", "Deployment, erased"]}],
+     pos:[0.05, 0.05, 0.05, 0.5]},
+    {k:'replace', n:'Replace', t:'Paste in the target fingers', c:'#ee8a3a', img:'frame_replace.jpg', lab:'Target fingers pasted in',
+     what:'Erase the source fingers, then paste a photo of the target gripper taken at the same jaw width, from a bank captured by sweeping its jaw under the wrist camera.',
+     keep:'Closes the visual gap the most: the training images look like the deployment images.',
+     cost:'Needs the target hardware before training. The pasted fingers show no real deformation, shadow or contact with the object.',
+     ev:[{"img": "ev_replace_1.jpg", "why": "The dataset is rewritten once before training, with the target fingers pasted in.", "labs": ["Dataset, before", "Dataset, after"]}, {"img": "ev_replace_2.jpg", "why": "When rendering the target gripper in place of the source, the contact information is largely lost and synthesized incorrectly. Depending on the task, some of the contact information may remain correct.", "labs": ["Original", "Replaced"]}, {"img": "ev_replace_3.jpg", "why": "Needs a photo bank of the target gripper swept across jaw widths, so the target hardware must exist before training.", "labs": ["Target finger bank, swept over width"]}, {"img": "ev_replace_4.jpg", "why": "The training images already show the target fingers, so they look like the deployment images.", "labs": ["Training: pasted target", "Deployment: target"]}],
+     pos:[0.05, 0.5, 0.95, 0.95]}
+  ];
+  var AX = [
+    {n:'Axis 1', q:'Where does the intervention act?', l:['Offline, on the data','dataset transformed once, before training'], r:['Inline, at inference','every step, on live observations']},
+    {n:'Axis 2', q:'What happens to the contact region?', l:['Contact destroyed','finger-object boundary removed or re-synthesized'], r:['Contact preserved','observed deformation and contact kept']},
+    {n:'Axis 3', q:'What must be known about the target during training?', l:['Target not needed','during training'], r:['Target known and accessible','during training']},
+    {n:'Axis 4', q:'How is the visual gap addressed?', l:['Not addressed','policy must tolerate the new fingers'], r:['Entirely within the target’s vision space','training images look like deployment']}
+  ];
+  var root = document.getElementById('tax'); if (!root) return;
+  var steps = root.querySelector('.tax-steps'), axes = root.querySelector('.tax-axes'), cur = 0;
+  steps.innerHTML = M.map(function (m, i) { return '<button type="button" class="tax-step" role="tab" data-i="' + i + '" style="--c:' + m.c + '"><i></i><b>' + m.n + '</b></button>'; }).join('');
+  axes.innerHTML = AX.map(function (a, ai) {
+    var marks = M.map(function (m, mi) {
+      var lane = 0;  // stack markers that share a position
+      for (var j = 0; j < mi; j++) if (Math.abs(M[j].pos[ai] - m.pos[ai]) < 0.1) lane++;
+      return '<div class="tax-mark" data-i="' + mi + '" style="--c:' + m.c + ';--p:' + m.pos[ai] + ';left:' + (m.pos[ai] * 100) + '%"><span>' + m.n + '</span></div>';
+    }).join('');
+    return '<div class="tax-axis" style="--ax:' + ['#c84b3a', '#2f8f4e', '#1f4f9a', '#b07d10'][ai] + '"><div class="ah"><span class="an">' + a.n + '</span><span class="aq">' + a.q + '</span></div><figure class="ev"><div class="ev-wrap"><img class="ev-img" alt="" loading="lazy"><span class="ev-tag l"></span><span class="ev-tag r"></span></div><figcaption class="ev-why"></figcaption></figure><div class="track"><div class="line"></div>' + marks +
+      '<div class="end l">' + a.l[0] + '</div><div class="end r">' + a.r[0] + '</div></div></div>';
+  }).join('');
+  function show(i) {
+    cur = (i + M.length) % M.length; var m = M[cur];
+    root.style.setProperty('--c', m.c);
+    root.querySelectorAll('.tax-axis').forEach(function (ax, ai) { var e = m.ev[ai]; ax.querySelector('.ev-img').src = e.img; ax.querySelector('.ev-img').alt = e.why; ax.querySelector('.ev-why').textContent = e.why; ax.style.setProperty('--c', m.c); var tl = ax.querySelector('.ev-tag.l'), tr = ax.querySelector('.ev-tag.r'); tl.textContent = e.labs[0] || ''; tr.textContent = e.labs[1] || ''; tr.hidden = !e.labs[1]; ax.querySelector('.ev-wrap').classList.toggle('is-pair', !!e.labs[1]); });
+    root.querySelectorAll('.tax-step').forEach(function (b, k) { b.classList.toggle('is-active', k === cur); b.setAttribute('aria-selected', k === cur); });
+    root.querySelectorAll('.tax-mark').forEach(function (el) { el.classList.toggle('is-cur', +el.dataset.i === cur); });
+  }
+  steps.addEventListener('click', function (e) { var b = e.target.closest('.tax-step'); if (b) show(+b.dataset.i); });
+  show(0);
+})();
+</script>
+<script>
+(function () {
+  // Lazy video loading: a clip only downloads when it is about to scroll into view, and pauses when it leaves.
+  function load(v) {
+    if (v.dataset.loaded) return;
+    Array.prototype.forEach.call(v.querySelectorAll('source[data-src]'), function (so) { so.src = so.dataset.src; });
+    v.dataset.loaded = '1'; v.load();
+  }
+  window.__loadVideo = load;
+  var vids = Array.prototype.slice.call(document.querySelectorAll('video[data-autoplay]'));
+  if (!('IntersectionObserver' in window)) { vids.forEach(function (v) { load(v); v.play().catch(function () {}); }); return; }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      var v = e.target;
+      if (e.isIntersecting) { load(v); var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+      else if (!v.paused) { v.pause(); }
+    });
+  }, { rootMargin: '300px 0px' });
+  vids.forEach(function (v) { io.observe(v); });
+})();
+</script>
+</body>
+</html>
+
+</body>
+</html>

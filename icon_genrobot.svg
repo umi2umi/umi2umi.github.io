@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="56 20 120 104" role="img" aria-label="GenRobot camera and gripper"><title>GenRobot camera and gripper</title><g stroke-linejoin="round">
+
+<rect x="72" y="24" width="88" height="55" rx="5" fill="#2a2a2a" stroke="#9a9a9a" stroke-width="1.6" />
+<path d="M78 27v6m4-6v6m4-6v6m4-6v6m4-6v6m4-6v6m36-6v6m4-6v6m4-6v6m4-6v6m4-6v6m4-6v6" stroke="#6a6a6a" stroke-width="1" />
+<rect x="76" y="35" width="80" height="28" rx="2" fill="#161616" stroke="#6a6a6a" stroke-width=".8" />
+<g fill="#111111" stroke="#bdbdbd" stroke-width="1.4">
+<circle cx="89" cy="49" r="8.5" /><circle cx="116" cy="49" r="12.5" /><circle cx="143" cy="49" r="8.5" />
+</g>
+<g fill="#1e1e1e" stroke="#8a8a8a" stroke-width="1">
+<circle cx="89" cy="49" r="5.8" /><circle cx="116" cy="49" r="9.2" /><circle cx="143" cy="49" r="5.8" />
+</g>
+<g fill="#080808"><circle cx="89" cy="49" r="3" /><circle cx="116" cy="49" r="5" /><circle cx="143" cy="49" r="3" /></g>
+<path d="M96 65v10m4-10v10m4-10v10m4-10v10m4-10v10m4-10v10m4-10v10m4-10v10m4-10v10m4-10v10m4-10v10" stroke="#6a6a6a" stroke-width="1" />
+<g fill="#4a4a4a" stroke="#b5b5b5" stroke-width="1.6"><path d="M82 68 62 83 78 103 86 99 74 84 92 73Z" /><path d="m150 68 20 15-16 20-8-4 12-15-18-11Z" /><rect x="78" y="97" width="10" height="23" rx="2" /><rect x="144" y="97" width="10" height="23" rx="2" /></g><g fill="#1c1c1c" stroke="#a8a8a8"><circle cx="85" cy="71" r="3" /><circle cx="147" cy="71" r="3" /><circle cx="69" cy="84" r="3" /><circle cx="163" cy="84" r="3" /></g>
+</g></svg>
